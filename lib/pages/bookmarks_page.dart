@@ -444,6 +444,7 @@ class _BookmarksPageState extends ConsumerState<BookmarksPage> {
                 enableLongPress: enableLongPress,
                 topWidget: _buildBookmarkTopBar(context, topic),
                 bottomWidget: _buildBookmarkExcerpt(context, topic),
+                showAvatar: false,
                 previewActions: topic.bookmarkId != null
                     ? _buildPreviewActions(topic)
                     : null,

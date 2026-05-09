@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/topic.dart';
 import '../../models/category.dart';
 import '../../providers/nodeseek_providers.dart';
@@ -23,6 +22,7 @@ class TopicCard extends ConsumerWidget {
   final Color? highlightColor;
   final Widget? topWidget;
   final Widget? bottomWidget;
+  final bool showAvatar;
 
   const TopicCard({
     super.key,
@@ -33,6 +33,7 @@ class TopicCard extends ConsumerWidget {
     this.highlightColor,
     this.topWidget,
     this.bottomWidget,
+    this.showAvatar = true,
   });
 
   @override
@@ -94,12 +95,14 @@ class TopicCard extends ConsumerWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 左侧：楼主头像
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: _buildOriginalPosterAvatar(context),
-                    ),
-                    const SizedBox(width: 10),
+                    if (showAvatar) ...[
+                      // 左侧：楼主头像
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: _buildOriginalPosterAvatar(context),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
                     // 右侧：两行内容
                     Expanded(
                       child: Column(
@@ -234,9 +237,13 @@ class TopicCard extends ConsumerWidget {
                                         category: category,
                                         faIcon: faIcon,
                                         logoUrl: logoUrl,
+                                        size: BadgeSize.topic,
                                       ),
                                     ...topic.tags.map(
-                                      (tag) => TagBadge(name: tag.name),
+                                      (tag) => TagBadge(
+                                        name: tag.name,
+                                        size: BadgeSize.topic,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -285,7 +292,7 @@ class TopicCard extends ConsumerWidget {
             // 底部附属区域
             if (bottomWidget != null)
               Padding(
-                padding: const EdgeInsets.fromLTRB(56, 2, 14, 8),
+                padding: EdgeInsets.fromLTRB(showAvatar ? 56 : 14, 2, 14, 8),
                 child: bottomWidget!,
               ),
           ],
@@ -475,7 +482,7 @@ class CompactTopicCard extends ConsumerWidget {
               // 2. 分类图标/Dot
               if (category != null) ...[
                 if (faIcon != null)
-                  FaIcon(faIcon, size: 12, color: _parseColor(category.color))
+                  Icon(faIcon, size: 12, color: _parseColor(category.color))
                 else if (logoUrl != null && logoUrl.isNotEmpty)
                   Image(
                     image: appImageProvider(

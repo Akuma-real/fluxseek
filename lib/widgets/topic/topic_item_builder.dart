@@ -16,6 +16,7 @@ Widget buildTopicItem({
   Color? highlightColor,
   Widget? topWidget,
   Widget? bottomWidget,
+  bool showAvatar = true,
   List<PreviewAction>? previewActions,
 }) {
   Widget child;
@@ -51,6 +52,7 @@ Widget buildTopicItem({
       highlightColor: highlightColor,
       topWidget: topWidget,
       bottomWidget: bottomWidget,
+      showAvatar: showAvatar,
     );
   }
 

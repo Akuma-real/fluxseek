@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/category.dart';
 import '../../providers/nodeseek_providers.dart';
 import '../../providers/pinned_categories_provider.dart';
@@ -44,16 +43,16 @@ Widget _buildCategoryIcon(
         fit: BoxFit.contain,
         errorBuilder: (_, e, s) {
           if (faIcon != null) {
-            return FaIcon(faIcon, size: size * 0.7, color: color);
+            return Icon(faIcon, size: size * 0.7, color: color);
           }
           return _buildColorDot(color, size * 0.5);
         },
       );
     }
-    if (faIcon != null) return FaIcon(faIcon, size: size * 0.7, color: color);
+    if (faIcon != null) return Icon(faIcon, size: size * 0.7, color: color);
   } else {
     // 图标优先：FA 图标 → logo → lock → 色点
-    if (faIcon != null) return FaIcon(faIcon, size: size * 0.7, color: color);
+    if (faIcon != null) return Icon(faIcon, size: size * 0.7, color: color);
     if (logoUrl != null && logoUrl.isNotEmpty) {
       return Image(
         image: appImageProvider(UrlHelper.resolveUrlWithCdn(logoUrl)),

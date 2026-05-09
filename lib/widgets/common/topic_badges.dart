@@ -25,6 +25,13 @@ class BadgeSize {
     iconSize: 10,
     fontSize: 10,
   );
+
+  static const BadgeSize topic = BadgeSize(
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    radius: 6,
+    iconSize: 12,
+    fontSize: 11,
+  );
 }
 
 class TagBadge extends StatelessWidget {
@@ -56,7 +63,8 @@ class TagBadge extends StatelessWidget {
         textStyle ??
         theme.textTheme.labelSmall?.copyWith(
           fontSize: size.fontSize,
-          color: theme.colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+          color: theme.colorScheme.onSurface,
         );
 
     Widget badge = Container(
@@ -106,7 +114,7 @@ class RemovableTagBadge extends StatelessWidget {
     final tagInfo = TagIconList.get(name);
     final bg =
         backgroundColor ??
-        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.72);
 
     return Material(
       color: Colors.transparent,
@@ -238,17 +246,20 @@ class CategoryBadge extends StatelessWidget {
         textStyle ??
         theme.textTheme.labelSmall?.copyWith(
           fontSize: size.fontSize,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
         );
 
     Widget badge = Container(
       padding: size.padding,
       decoration: BoxDecoration(
-        color: categoryColor.withValues(alpha: 0.08),
+        color: Color.alphaBlend(
+          categoryColor.withValues(alpha: 0.12),
+          theme.colorScheme.surfaceContainerHighest,
+        ),
         borderRadius: BorderRadius.circular(size.radius),
         border: Border.all(
-          color: categoryColor.withValues(alpha: 0.2),
+          color: categoryColor.withValues(alpha: 0.35),
           width: 1,
         ),
       ),
@@ -258,7 +269,7 @@ class CategoryBadge extends StatelessWidget {
           if (faIcon != null)
             Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: FaIcon(faIcon, size: size.iconSize, color: categoryColor),
+              child: Icon(faIcon, size: size.iconSize, color: categoryColor),
             )
           else if (logoUrl != null && logoUrl!.isNotEmpty)
             Image(

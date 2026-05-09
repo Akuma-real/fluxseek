@@ -853,12 +853,17 @@ class _MainPageState extends ConsumerState<MainPage>
     // 监听当前用户状态
     final currentUserAsync = ref.watch(currentUserProvider);
     final user = currentUserAsync.value;
+    final authResolved = currentUserAsync.hasValue;
 
     // 从偏好读取底栏布局，按注册表解析为 entry 列表（含所有 kind）
     final bottomNavIds = ref.watch(
       preferencesProvider.select((p) => p.bottomNavIds),
     );
-    final entries = _resolveEntries(bottomNavIds, user);
+    final entries = _resolveEntries(
+      bottomNavIds,
+      user,
+      authResolved: authResolved,
+    );
     _lastResolvedEntries = entries;
 
     // page kind 的子集用于 IndexedStack
@@ -945,19 +950,24 @@ class _MainPageState extends ConsumerState<MainPage>
   /// 按偏好的顺序解析 entry 列表（含所有 kind）
   ///
   /// - 移除注册表里不存在的 id
-  /// - 未登录时过滤掉 requiresLogin 的 entry
+  /// - 已确认未登录时过滤掉 requiresLogin 的 entry
   /// - 去重
   /// - 补齐 locked entry（防御；正常情况编辑器已保证包含）
-  List<NavEntry> _resolveEntries(List<String> ids, User? user) {
+  List<NavEntry> _resolveEntries(
+    List<String> ids,
+    User? user, {
+    required bool authResolved,
+  }) {
     final all = NavEntryRegistry.buildAll();
     final byId = {for (final e in all) e.id: e};
     final resolved = <NavEntry>[];
     final seen = <String>{};
+    final allowLoginEntries = user != null || !authResolved;
 
     for (final id in ids) {
       final e = byId[id];
       if (e == null) continue;
-      if (e.requiresLogin && user == null) continue;
+      if (e.requiresLogin && !allowLoginEntries) continue;
       if (seen.contains(id)) continue;
       resolved.add(e);
       seen.add(id);
@@ -968,7 +978,7 @@ class _MainPageState extends ConsumerState<MainPage>
       if (seen.contains(id)) continue;
       final e = byId[id];
       if (e == null) continue;
-      if (e.requiresLogin && user == null) continue;
+      if (e.requiresLogin && !allowLoginEntries) continue;
       resolved.add(e);
       seen.add(id);
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluxseek/l10n/s.dart';
 import 'package:fluxseek/models/category.dart';
 import 'package:fluxseek/utils/font_awesome_helper.dart';
@@ -326,7 +325,7 @@ class _CategorySelectionSheetState extends State<CategorySelectionSheet> {
     }
 
     if (faIcon != null) {
-      return FaIcon(faIcon, size: 20, color: _parseColor(category.color));
+      return Icon(faIcon, size: 20, color: _parseColor(category.color));
     }
 
     if (logoUrl != null && logoUrl.isNotEmpty) {

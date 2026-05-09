@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../models/category.dart';
 import '../../providers/nodeseek_providers.dart';
@@ -130,7 +129,7 @@ Widget _buildCategoryIcon(Category category, Color color, double size) {
   final faIcon = FontAwesomeHelper.getIcon(category.icon);
 
   if (faIcon != null) {
-    return FaIcon(faIcon, size: size * 0.85, color: color);
+    return Icon(faIcon, size: size * 0.85, color: color);
   }
 
   if (logoUrl != null && logoUrl.isNotEmpty) {

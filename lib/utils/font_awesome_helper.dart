@@ -2,6 +2,23 @@ import 'package:flutter/material.dart';
 import 'font_awesome_name_mapping.dart';
 
 class FontAwesomeHelper {
+  static const Map<String, IconData> _nodeSeekIconAliases = {
+    'tea': Icons.local_cafe_rounded,
+    'formula': Icons.functions_rounded,
+    'receiver': Icons.settings_input_antenna_rounded,
+    'dashboard-one': Icons.dashboard_outlined,
+    'dollar': Icons.attach_money_rounded,
+    'car': Icons.directions_car_rounded,
+    'hold-interface': Icons.campaign_outlined,
+    'oval-love-two': Icons.favorite_border_rounded,
+    'terminal': Icons.terminal_rounded,
+    'pic-one': Icons.image_outlined,
+    'face-recognition': Icons.center_focus_weak_rounded,
+    'open-one': Icons.lock_open_rounded,
+    'texture': Icons.texture_rounded,
+    'experiment': Icons.science_outlined,
+  };
+
   static IconData? getIcon(String? name) {
     if (name == null) return null;
     final raw = name.trim().toLowerCase();
@@ -35,6 +52,9 @@ class FontAwesomeHelper {
         .replaceAll('far ', '')
         .replaceAll('fab ', '')
         .replaceAll('fa ', '');
+
+    final aliasIcon = _nodeSeekIconAliases[clean] ?? _nodeSeekIconAliases[raw];
+    if (aliasIcon != null) return aliasIcon;
 
     for (final style in const ['solid', 'regular', 'brands']) {
       icon = faIconNameMapping['$style $clean'];
