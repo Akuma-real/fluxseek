@@ -1,0 +1,121 @@
+/// MessageBus 相关数据模型
+library;
+
+/// 话题频道消息类型
+enum TopicMessageType {
+  created, // 新帖子创建
+  revised, // 帖子被修改
+  rebaked, // 帖子被重新渲染
+  deleted, // 帖子被删除（软删除）
+  destroyed, // 帖子被永久删除
+  recovered, // 帖子被恢复
+  acted, // 有人对帖子执行了操作
+  liked, // 有人点赞
+  unliked, // 有人取消点赞
+  read, // 有人阅读了帖子
+  stats, // 话题统计更新
+  moveToInbox, // 私信移入收件箱
+  archived, // 私信被归档
+  removeAllowedUser, // 用户被移出私信
+}
+
+/// 帖子更新信息
+class PostUpdate {
+  final int postId;
+  final TopicMessageType type;
+  final DateTime updatedAt;
+  final int? likesCount; // 用于 liked/unliked
+  final int? readersCount; // 用于 read
+  final int? userId; // 操作用户
+
+  const PostUpdate({
+    required this.postId,
+    required this.type,
+    required this.updatedAt,
+    this.likesCount,
+    this.readersCount,
+    this.userId,
+  });
+}
+
+/// 话题统计更新
+class TopicStatsUpdate {
+  final int? postsCount;
+  final int? likeCount;
+  final DateTime? lastPostedAt;
+
+  const TopicStatsUpdate({this.postsCount, this.likeCount, this.lastPostedAt});
+}
+
+/// 话题频道状态
+class TopicChannelState {
+  final bool hasNewReplies;
+  final List<PostUpdate> postUpdates;
+  final TopicStatsUpdate? statsUpdate;
+  final bool messageArchived;
+  final bool reloadRequested;
+  final bool refreshStreamRequested;
+  final int? notificationLevelChange;
+
+  const TopicChannelState({
+    this.hasNewReplies = false,
+    this.postUpdates = const [],
+    this.statsUpdate,
+    this.messageArchived = false,
+    this.reloadRequested = false,
+    this.refreshStreamRequested = false,
+    this.notificationLevelChange,
+  });
+
+  TopicChannelState copyWith({
+    bool? hasNewReplies,
+    List<PostUpdate>? postUpdates,
+    TopicStatsUpdate? statsUpdate,
+    bool? clearStatsUpdate,
+    bool? messageArchived,
+    bool? reloadRequested,
+    bool? refreshStreamRequested,
+    int? notificationLevelChange,
+    bool clearNotificationLevelChange = false,
+  }) {
+    return TopicChannelState(
+      hasNewReplies: hasNewReplies ?? this.hasNewReplies,
+      postUpdates: postUpdates ?? this.postUpdates,
+      statsUpdate: clearStatsUpdate == true
+          ? null
+          : (statsUpdate ?? this.statsUpdate),
+      messageArchived: messageArchived ?? this.messageArchived,
+      reloadRequested: reloadRequested ?? this.reloadRequested,
+      refreshStreamRequested:
+          refreshStreamRequested ?? this.refreshStreamRequested,
+      notificationLevelChange: clearNotificationLevelChange
+          ? null
+          : (notificationLevelChange ?? this.notificationLevelChange),
+    );
+  }
+}
+
+/// 通知计数状态
+class NotificationCountState {
+  final int allUnread;
+  final int unread;
+  final int highPriority;
+
+  const NotificationCountState({
+    this.allUnread = 0,
+    this.unread = 0,
+    this.highPriority = 0,
+  });
+
+  NotificationCountState copyWith({
+    int? allUnread,
+    int? unread,
+    int? highPriority,
+  }) {
+    return NotificationCountState(
+      allUnread: allUnread ?? this.allUnread,
+      unread: unread ?? this.unread,
+      highPriority: highPriority ?? this.highPriority,
+    );
+  }
+}
