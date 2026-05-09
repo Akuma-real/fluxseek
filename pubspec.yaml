@@ -1,7 +1,7 @@
 name: fluxseek
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0-beta.7+2026050922
+version: 0.1.0-beta.8+2026050923
 
 environment:
   sdk: ^3.10.4
