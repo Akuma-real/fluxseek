@@ -37,3 +37,36 @@ Initialized Trellis workflow for fluxseek, replaced generic backend/frontend tem
 ### Next Steps
 
 - None - task complete
+
+
+## Session 2: Fix startup nav and topic badges
+
+**Date**: 2026-05-09
+**Task**: Fix startup nav and topic badges
+**Branch**: `main`
+
+### Summary
+
+Fixed startup bottom navigation shape while auth loads, removed bookmark avatar gutter, improved topic category/tag readability, and mapped NodeSeek category icon aliases with regression coverage.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `69b6d69` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
