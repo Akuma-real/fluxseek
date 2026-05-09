@@ -88,9 +88,9 @@ class UpdateService {
   static const String _apiUrl =
       'https://api.github.com/repos/$_repository/releases/latest';
   static const String _autoCheckUpdateKey = 'auto_check_update';
-  static const String _cacheKey = 'update_cache';
-  static const String _cacheTimeKey = 'update_cache_time';
-  static const String _etagKey = 'update_etag';
+  static const String _cacheKey = 'update_cache_v2';
+  static const String _cacheTimeKey = 'update_cache_time_v2';
+  static const String _etagKey = 'update_etag_v2';
 
   // 缓存有效期（1 小时）
   static const Duration _cacheValidDuration = Duration(hours: 1);
@@ -201,9 +201,17 @@ class UpdateService {
             'If-None-Match': ?storedEtag,
           },
           validateStatus: (status) =>
-              status != null && (status == 200 || status == 304),
+              status != null &&
+              (status == 200 || status == 304 || status == 404),
         ),
       );
+
+      if (response.statusCode == 404) {
+        await _prefs?.remove(_etagKey);
+        final updateInfo = _noReleaseUpdateInfo(currentVersion);
+        await _cacheUpdateInfo(updateInfo);
+        return updateInfo;
+      }
 
       // 304 Not Modified - 使用缓存
       if (response.statusCode == 304) {
@@ -248,6 +256,16 @@ class UpdateService {
       }
       rethrow;
     }
+  }
+
+  UpdateInfo _noReleaseUpdateInfo(String currentVersion) {
+    return UpdateInfo(
+      currentVersion: currentVersion,
+      remoteVersion: currentVersion,
+      releaseUrl: 'https://github.com/$_repository/releases',
+      releaseNotes: '',
+      hasUpdate: false,
+    );
   }
 
   /// 从缓存获取更新信息
