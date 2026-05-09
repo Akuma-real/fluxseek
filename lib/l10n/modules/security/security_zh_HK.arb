@@ -1,0 +1,56 @@
+{
+  "@@locale": "zh_HK",
+  "cfVerify_cooldown": "驗證太頻繁，請稍後再試",
+  "cfVerify_desc": "手動觸發過盾驗證",
+  "cfVerify_failed": "驗證未通過",
+  "cfVerify_success": "驗證成功",
+  "cfVerify_title": "Cloudflare 驗證",
+  "cf_abandonVerifyMessage": "退出驗證將導致相關功能無法使用，確定要退出嗎？",
+  "cf_abandonVerifyTitle": "放棄驗證？",
+  "cf_autoVerifyTimeout": "自動驗證超時，請手動完成驗證",
+  "cf_backgroundVerifying": "後台驗證中... (點擊打開)",
+  "cf_cannotOpenVerifyPage": "無法打開驗證頁面，請稍後重試",
+  "cf_challengeFailedCooldown": "安全驗證失敗，已進入冷卻期，請稍後再試",
+  "cf_challengeNotEffective": "驗證未生效，請稍後重試",
+  "cf_continueVerify": "繼續驗證",
+  "cf_cooldown": "請稍後再試",
+  "cf_failedRetry": "安全驗證失敗，請重試",
+  "cf_failedWithCause": "安全驗證失敗: {cause}",
+  "@cf_failedWithCause": {
+    "placeholders": {
+      "cause": {
+        "type": "String"
+      }
+    }
+  },
+  "cf_helpContent": "這是 Cloudflare 安全驗證頁面。\n\n請完成頁面上的驗證挑戰（如勾選框或滑塊）。\n\n驗證成功後會自動關閉此頁面。\n\n如果長時間無法完成，可以嘗試：\n• 點擊刷新按鈕重新加載\n• 檢查網絡連接\n• 關閉後稍後再試",
+  "cf_helpTitle": "驗證幫助",
+  "cf_loadFailed": "加載失敗: {description}",
+  "@cf_loadFailed": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "cf_securityVerifyTitle": "安全驗證",
+  "cf_userCancelled": "驗證已取消",
+  "cf_verifyIncomplete": "驗證未完成，請重試",
+  "cf_verifyLonger": "驗證時間較長，還剩 {seconds} 秒",
+  "@cf_verifyLonger": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "cf_verifyTimeout": "驗證超時，請重試",
+  "cf_verifying": "驗證中... {seconds}s",
+  "@cf_verifying": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  }
+}

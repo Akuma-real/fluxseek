@@ -1,0 +1,54 @@
+{
+  "@@locale": "zh",
+  "invite_title": "邀请码",
+  "invite_buyTitle": "购买邀请码",
+  "invite_buyDescription": "花费 {cost} 鸡腿生成一个邀请码，可用于邀请新用户注册 NodeSeek。",
+  "@invite_buyDescription": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buyAction": "购买（-{cost} 鸡腿）",
+  "@invite_buyAction": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buying": "购买中...",
+  "invite_balanceLabel": "当前余额",
+  "invite_insufficientCoin": "鸡腿不足，需要 {required}，当前只有 {current}",
+  "@invite_insufficientCoin": {
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buyConfirmTitle": "确认购买邀请码",
+  "invite_buyConfirmWarning": "此操作将立即扣除鸡腿，一经确认无法撤销！",
+  "invite_buyConfirmCurrent": "当前鸡腿余额",
+  "invite_buyConfirmCost": "本次消耗",
+  "invite_buyConfirmRemaining": "购买后余额",
+  "invite_buyConfirmNotice": "请再次确认：邀请码一旦生成，即使未被使用也不会返还鸡腿。请确保你真的需要这个邀请码。",
+  "invite_buyConfirmAction": "确认购买",
+  "invite_buySuccess": "邀请码购买成功",
+  "invite_buySuccessTitle": "购买成功",
+  "invite_codeLabel": "邀请码",
+  "invite_linkLabel": "注册链接",
+  "invite_copyCode": "复制邀请码",
+  "invite_codeCopied": "邀请码已复制",
+  "invite_historyTitle": "历史邀请码",
+  "invite_statusUsed": "已使用",
+  "invite_statusUnused": "未使用",
+  "invite_noLinks": "还没有邀请码记录",
+  "invite_createFailed": "生成邀请码失败",
+  "invite_linkCopied": "邀请链接已复制",
+  "invite_shareSubject": "NodeSeek 邀请链接"
+}

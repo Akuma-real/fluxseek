@@ -1,0 +1,54 @@
+{
+  "@@locale": "en",
+  "invite_title": "Invite Codes",
+  "invite_buyTitle": "Buy Invite Code",
+  "invite_buyDescription": "Spend {cost} drumsticks to generate an invite code for new NodeSeek registrations.",
+  "@invite_buyDescription": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buyAction": "Buy (-{cost} drumsticks)",
+  "@invite_buyAction": {
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buying": "Purchasing...",
+  "invite_balanceLabel": "Current balance",
+  "invite_insufficientCoin": "Not enough drumsticks. Need {required}, you have {current}.",
+  "@invite_insufficientCoin": {
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "invite_buyConfirmTitle": "Confirm Invite Purchase",
+  "invite_buyConfirmWarning": "Drumsticks will be deducted immediately and this cannot be undone!",
+  "invite_buyConfirmCurrent": "Current balance",
+  "invite_buyConfirmCost": "Cost",
+  "invite_buyConfirmRemaining": "Balance after purchase",
+  "invite_buyConfirmNotice": "Please confirm: once the invite code is generated, drumsticks will not be refunded even if the code is never used.",
+  "invite_buyConfirmAction": "Confirm Purchase",
+  "invite_buySuccess": "Invite code purchased",
+  "invite_buySuccessTitle": "Purchase Successful",
+  "invite_codeLabel": "Invite Code",
+  "invite_linkLabel": "Registration Link",
+  "invite_copyCode": "Copy code",
+  "invite_codeCopied": "Code copied",
+  "invite_historyTitle": "Past Invites",
+  "invite_statusUsed": "Used",
+  "invite_statusUnused": "Unused",
+  "invite_noLinks": "No invite codes yet",
+  "invite_createFailed": "Failed to generate invite code",
+  "invite_linkCopied": "Link copied",
+  "invite_shareSubject": "NodeSeek Invite Link"
+}
