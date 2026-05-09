@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=FluxSeek
+Comment=NodeSeek 客户端
+Exec=fluxseek %u
+Icon=fluxseek
+Terminal=false
+Type=Application
+Categories=Network;
+MimeType=x-scheme-handler/fluxseek;x-scheme-handler/https;
+StartupWMClass=fluxseek
