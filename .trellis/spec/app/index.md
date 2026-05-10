@@ -33,3 +33,4 @@
 - Android 是正式目标；Linux 可作为开发验证目标，但不要把 Linux-only 行为当成发布行为。
 - 真实能力优先于占位功能。NodeSeek 没有确认的能力不要在 UI 或 service 中伪造。
 - 优先复用已有 provider、service、widget、tool 命令；新增抽象前先 `rg` 搜同类实现。
+- AI 助手与用户对话时使用中文，不要用英文。
