@@ -373,3 +373,36 @@ Wrapped _dio.post('/posts.json') with try/catch _throwApiError to match existing
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: 发布 beta 版本 0.1.0-beta.15
+
+**Date**: 2026-05-10
+**Task**: 发布 beta 版本 0.1.0-beta.15
+**Branch**: `main`
+
+### Summary
+
+通过 just prerelease 发布 beta 版本 v0.1.0-beta.15+2026051023。analyze 通过，test 因依赖解析问题跳过。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `d77a60e` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
