@@ -11,6 +11,7 @@
 - ABI filtering follows Gradle `target-platform` to avoid bundling unused native libraries.
 - Release builds enable R8 minification and resource shrinking; keep rules live in `android/app/proguard-rules.pro`.
 - Release/profile builds prune Android-unused Flutter assets after merge and before compression.
+- Root `android/build.gradle.kts` may enforce `compileSdk` for Android library subprojects when a Flutter plugin ships an outdated Android Gradle script.
 
 ## Rules
 
@@ -18,6 +19,8 @@
 - Keep release/profile/debug signing fallback explicit and understandable.
 - For Android release builds, prefer `just build -- apk --release --target-platform android-arm64` or the release scripts rather than raw Gradle.
 - If changing native dependencies such as Cronet, WebKit, Firebase, or desugaring, verify Android build and document any required SDK/JDK changes.
+- Do not upgrade this plugin-based Flutter app to AGP 9.x just because it is the newest stable AGP. Flutter's AGP 9 migration requires built-in Kotlin and can break projects that still apply `kotlin-android`; use the newest verified AGP 8.x line unless a dedicated AGP 9 migration is in scope.
+- If a plugin subproject fails `checkReleaseAarMetadata` because it compiles against an old Android API, prefer a root Gradle convention that updates `com.android.library` subproject `compileSdk` rather than patching pub-cache files.
 - Do not depend on umbrella Flutter plugins when only Android/Linux implementations are needed and the umbrella package pulls web assets into Android APKs.
 - `FluxseekApplication` intentionally disables WebView debugging early and initializes Firebase only when Crashlytics is enabled.
 
@@ -26,6 +29,71 @@
 - Static check: `just analyze`
 - Focused tests: `just test -- <test path>`
 - Android APK build when platform code changes: `just build -- apk --release --target-platform android-arm64`
+
+## Scenario: Android Dependency Upgrade Compatibility
+
+### 1. Scope / Trigger
+
+- Trigger: upgrading AGP, Gradle, Kotlin, Firebase, AndroidX, desugaring, or Flutter plugins with Android native code.
+
+### 2. Signatures
+
+- Build command: `just build -- apk --release --target-platform android-arm64`
+- Root Android library override location: `android/build.gradle.kts`
+
+### 3. Contracts
+
+- Keep AGP on the latest verified 8.x version unless the task explicitly migrates to AGP 9 built-in Kotlin.
+- Keep Gradle on the newest version compatible with the selected AGP line.
+- Plugin subprojects that apply `com.android.library` must compile against an API level new enough for their AndroidX dependencies.
+
+### 4. Validation & Error Matrix
+
+- `kotlin-android` fails under AGP 9 -> revert to latest verified AGP 8.x or perform the full Flutter AGP 9 migration.
+- `checkReleaseAarMetadata` says a plugin compiles against `android-31` while AndroidX requires 34+ -> enforce a newer `compileSdk` for Android library subprojects from root Gradle.
+
+### 5. Good/Base/Bad Cases
+
+- Good: AGP 8.x + compatible Gradle builds the release APK and keeps plugin scripts unmodified.
+- Base: AndroidX-only version bumps still run the release APK build.
+- Bad: Editing files inside `.pub-cache` or committing local plugin symlink churn.
+
+### 6. Tests Required
+
+- Run `just analyze`.
+- Run `just test` unless the change is Android-only metadata.
+- Run `just build -- apk --release --target-platform android-arm64`.
+
+### 7. Wrong vs Correct
+
+#### Wrong
+
+```kotlin
+// android/settings.gradle.kts
+id("com.android.application") version "9.2.1" apply false
+```
+
+#### Correct
+
+```kotlin
+// Use latest verified AGP 8.x unless an AGP 9 migration is the task.
+id("com.android.application") version "8.13.2" apply false
+```
+
+#### Correct
+
+```kotlin
+// android/build.gradle.kts
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin("com.android.library")) {
+            extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
+                compileSdk = 36
+            }
+        }
+    }
+}
+```
 
 ## Scenario: Android release shrinking
 

@@ -25,6 +25,8 @@ Rules:
 - Run `just l10n-check` before finishing l10n work.
 - Do not hand edit generated localization output.
 - If updating `font_awesome_flutter`, run `dart run tool/gen_fa_name_mapping.dart` as noted in `pubspec.yaml`.
+- `tool/gen_fa_name_mapping.dart` must support the current pub cache layout on Linux/macOS (`$HOME/.pub-cache`) and Windows (`%LOCALAPPDATA%\Pub\Cache`) when `PUB_CACHE` is unset.
+- `font_awesome_flutter` 11.x exposes constants as `FaIconData`; generated CSS mappings should continue returning plain `IconData` for NodeSeek category/icon alias consumers that render through Flutter `Icon`.
 
 ## Flutter Wrapper
 
