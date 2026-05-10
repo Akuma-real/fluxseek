@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 2
-- **Last Active**: 2026-05-09
+- **Total Sessions**: 3
+- **Last Active**: 2026-05-10
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~72 | Active |
+| `journal-1.md` | ~105 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 3 | 2026-05-10 | Non-rendering release fixes | `2e79ce5` | `main` |
 | 2 | 2026-05-09 | Fix startup nav and topic badges | `69b6d69` | `main` |
 | 1 | 2026-05-09 | Bootstrap Trellis for Flutter Android app | `e4f4c94` | `main` |
 <!-- @@@/auto:session-history -->

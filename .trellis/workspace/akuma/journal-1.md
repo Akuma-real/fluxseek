@@ -70,3 +70,36 @@ Fixed startup bottom navigation shape while auth loads, removed bookmark avatar 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Non-rendering release fixes
+
+**Date**: 2026-05-10
+**Task**: Non-rendering release fixes
+**Branch**: `main`
+
+### Summary
+
+Committed non-rendering release fixes including branding assets, local browsing history wiring, prerelease update checks, category fallback handling, and release versioning documentation. Rendering experiments were left out before finishing.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2e79ce5` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
