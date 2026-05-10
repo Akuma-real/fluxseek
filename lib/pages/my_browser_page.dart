@@ -4,10 +4,12 @@ import 'package:ai_model_manager/ai_model_manager.dart'
     show SwipeActionCell, SwipeAction, SwipeActionScope;
 import '../models/web_bookmark.dart';
 import '../providers/web_bookmark_provider.dart';
+import '../providers/web_history_provider.dart';
 import '../utils/time_utils.dart';
 import '../l10n/s.dart';
 import '../utils/dialog_utils.dart';
 import 'webview_page.dart';
+import 'web_history_page.dart';
 import 'download_list_page.dart';
 
 // ---------------------------------------------------------------------------
@@ -22,6 +24,9 @@ class MyBrowserPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final bookmarkCount = ref.watch(
       webBookmarkProvider.select((list) => list.length),
+    );
+    final historyCount = ref.watch(
+      webHistoryProvider.select((list) => list.length),
     );
 
     return Scaffold(
@@ -49,6 +54,30 @@ class MyBrowserPage extends ConsumerWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => const _BookmarkListPage(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 60),
+                  child: Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.2,
+                    ),
+                  ),
+                ),
+                _EntryTile(
+                  icon: Icons.history_rounded,
+                  iconColor: Colors.purple,
+                  title: context.l10n.myBrowser_history,
+                  subtitle: historyCount == 0
+                      ? context.l10n.myBrowser_historyDesc
+                      : historyCount.toString(),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WebHistoryPage(isActive: false),
                     ),
                   ),
                 ),

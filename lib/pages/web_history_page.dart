@@ -8,7 +8,10 @@ import '../models/web_history_item.dart';
 import '../navigation/nav_action_bus.dart';
 import '../providers/web_history_provider.dart';
 import '../utils/dialog_utils.dart';
+import '../utils/link_launcher.dart';
+import '../utils/node_seek_url_parser.dart';
 import '../utils/time_utils.dart';
+import 'topic_detail_page/topic_detail_page.dart';
 import 'webview_page.dart';
 
 /// 本地内置浏览器历史页。
@@ -38,6 +41,7 @@ class _WebHistoryPageState extends ConsumerState<WebHistoryPage> {
   }
 
   void _publishScrollProgress() {
+    if (!widget.isActive) return;
     if (!_scrollController.hasClients) return;
     final raw = _scrollController.offset;
     final progress = raw < 0 ? 0.0 : raw;
@@ -133,11 +137,7 @@ class _WebHistoryPageState extends ConsumerState<WebHistoryPage> {
                       ],
                       child: _HistoryCard(
                         item: item,
-                        onTap: () => WebViewPage.open(
-                          context,
-                          item.url,
-                          title: item.title,
-                        ),
+                        onTap: () => _openHistoryItem(item),
                       ),
                     ),
                   );
@@ -145,6 +145,25 @@ class _WebHistoryPageState extends ConsumerState<WebHistoryPage> {
               ),
             ),
     );
+  }
+
+  void _openHistoryItem(WebHistoryItem item) {
+    final topicInfo = NodeSeekUrlParser.parseTopic(item.url);
+    if (topicInfo != null && isInternalUrlString(item.url)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => TopicDetailPage(
+            topicId: topicInfo.topicId,
+            initialTitle: item.title,
+            scrollToPostNumber: topicInfo.postNumber,
+          ),
+        ),
+      );
+      return;
+    }
+
+    WebViewPage.open(context, item.url, title: item.title);
   }
 
   void _confirmClear(BuildContext context) {

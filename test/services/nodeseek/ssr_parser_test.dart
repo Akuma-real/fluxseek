@@ -75,8 +75,10 @@ void main() {
     expect(parsed.topicListResponse.moreTopicsUrl, '/page-2');
   });
 
-  test('falls back to NodeSeek avatar endpoint when list avatar src is empty', () {
-    const html = '''
+  test(
+    'falls back to NodeSeek avatar endpoint when list avatar src is empty',
+    () {
+      const html = '''
 <html>
   <body>
     <ul class="post-list">
@@ -106,13 +108,14 @@ void main() {
 </html>
 ''';
 
-    final parsed = parseNodeSeekSsrHtml(html);
+      final parsed = parseNodeSeekSsrHtml(html);
 
-    expect(parsed, isNotNull);
-    final poster = parsed!.topicListResponse.topics.single.posters.single;
-    expect(poster.user?.id, 42);
-    expect(poster.user?.avatarTemplate, '/avatar/42.png');
-  });
+      expect(parsed, isNotNull);
+      final poster = parsed!.topicListResponse.topics.single.posters.single;
+      expect(poster.user?.id, 42);
+      expect(poster.user?.avatarTemplate, '/avatar/42.png');
+    },
+  );
 
   test('renders NodeSeek topic markdown and avatar templates', () {
     const html = '''
@@ -159,6 +162,94 @@ void main() {
     expect(post.cooked, contains('https://example.com/a.png'));
     expect(post.cooked, contains('<a href='));
     expect(post.signatureCooked, contains('<strong>签名</strong>'));
+  });
+
+  test('renders NodeSeek magic tabs and ansi code fences', () {
+    const html = '''
+<script id="temp-script" type="application/json">
+{
+  "allCategory": [
+    {"key": "review", "cn_text": "测评", "icon": "dashboard-one"}
+  ],
+  "postData": {
+    "postId": 723267,
+    "postPage": 1,
+    "postPageCount": 1,
+    "title": "NQ 测试留档",
+    "views": "10",
+    "category": "review",
+    "locked": 0,
+    "collected": false,
+    "op": {"uid": 45750, "name": "xiaov"},
+    "comments": [
+      {
+        "commentId": 9975263,
+        "floorIndex": 0,
+        "poster": {"uid": 45750, "name": "xiaov"},
+        "time": "2026-05-10T06:20:08.000Z",
+        "markdown": ":::: tabs\\n::: tab-item 💻基本信息\\n```ansi\\n\\u001b[36mCPU\\u001b[0m OK\\n```\\n:::\\n::: tab-item 🌐网络质量\\n![image](https://example.com/net.webp)\\n:::\\n::::",
+        "signature": "",
+        "likeCount": 0
+      }
+    ]
+  }
+}
+</script>
+''';
+
+    final parsed = parseNodeSeekTopicDetailSsrHtml(html);
+
+    expect(parsed, isNotNull);
+    final cooked = parsed!.detail.postStream.posts.single.cooked;
+    expect(cooked, contains('class="nsk-magic-tabs enabled"'));
+    expect(cooked, contains('class="nsk-magic-tab-title is-active"'));
+    expect(cooked, contains('💻基本信息'));
+    expect(cooked, contains('🌐网络质量'));
+    expect(cooked, contains('language-ansi'));
+    expect(cooked, contains('\u001b[36mCPU\u001b[0m OK'));
+    expect(cooked, contains('https://example.com/net.webp'));
+  });
+
+  test('keeps NodeSeek tabs syntax literal inside fenced code blocks', () {
+    const html = '''
+<script id="temp-script" type="application/json">
+{
+  "allCategory": [
+    {"key": "review", "cn_text": "测评", "icon": "dashboard-one"}
+  ],
+  "postData": {
+    "postId": 723268,
+    "postPage": 1,
+    "postPageCount": 1,
+    "title": "tabs 语法示例",
+    "views": "10",
+    "category": "review",
+    "locked": 0,
+    "collected": false,
+    "op": {"uid": 45750, "name": "xiaov"},
+    "comments": [
+      {
+        "commentId": 9975264,
+        "floorIndex": 0,
+        "poster": {"uid": 45750, "name": "xiaov"},
+        "time": "2026-05-10T06:20:08.000Z",
+        "markdown": "```markdown\\n:::: tabs\\n::: tab-item 示例\\ncontent\\n:::\\n::::\\n```",
+        "signature": "",
+        "likeCount": 0
+      }
+    ]
+  }
+}
+</script>
+''';
+
+    final parsed = parseNodeSeekTopicDetailSsrHtml(html);
+
+    expect(parsed, isNotNull);
+    final cooked = parsed!.detail.postStream.posts.single.cooked;
+    expect(cooked, isNot(contains('class="nsk-magic-tabs enabled"')));
+    expect(cooked, contains(':::: tabs'));
+    expect(cooked, contains('::: tab-item 示例'));
   });
 
   test('maps rendered post list into search results', () {

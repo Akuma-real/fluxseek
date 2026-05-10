@@ -666,8 +666,10 @@ DateTime? _parseTime(Object? value) {
     return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true).toLocal();
   }
   if (value is num) {
-    return DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true)
-        .toLocal();
+    return DateTime.fromMillisecondsSinceEpoch(
+      value.toInt(),
+      isUtc: true,
+    ).toLocal();
   }
   final str = value.toString();
   if (str.isEmpty) return null;
@@ -716,10 +718,133 @@ String _markdownToBasicHtml(String markdown) {
       )
       .replaceAll(RegExp(r'\n{3,}'), '\n\n')
       .trim();
-  return md.markdownToHtml(
-    _convertSoftBreaks(normalized),
-    extensionSet: md.ExtensionSet.gitHubFlavored,
-  );
+  return _markdownToHtmlWithNodeSeekBlocks(normalized);
+}
+
+String _markdownToHtmlWithNodeSeekBlocks(String markdown) {
+  final lines = markdown.replaceAll('\r\n', '\n').split('\n');
+  final html = StringBuffer();
+  final plain = <String>[];
+
+  void flushPlain() {
+    final segment = plain.join('\n').trim();
+    plain.clear();
+    if (segment.isEmpty) return;
+    html.write(
+      md.markdownToHtml(
+        _convertSoftBreaks(segment),
+        extensionSet: md.ExtensionSet.gitHubFlavored,
+      ),
+    );
+  }
+
+  var i = 0;
+  var inFence = false;
+  while (i < lines.length) {
+    final line = lines[i];
+    if (_isFenceLine(line)) {
+      inFence = !inFence;
+      plain.add(line);
+      i++;
+      continue;
+    }
+
+    if (!inFence && _isNodeSeekTabsStart(line)) {
+      final block = <String>[];
+      var inTabsFence = false;
+      i++;
+      while (i < lines.length) {
+        final line = lines[i];
+        if (_isFenceLine(line)) inTabsFence = !inTabsFence;
+        if (!inTabsFence && line.trim() == '::::') break;
+        block.add(line);
+        i++;
+      }
+
+      final tabsHtml = _nodeSeekTabsToHtml(block);
+      if (tabsHtml != null) {
+        flushPlain();
+        html.write(tabsHtml);
+        if (i < lines.length && lines[i].trim() == '::::') i++;
+        continue;
+      }
+
+      plain
+        ..add(':::: tabs')
+        ..addAll(block);
+      if (i < lines.length && lines[i].trim() == '::::') {
+        plain.add(lines[i]);
+        i++;
+      }
+      continue;
+    }
+
+    plain.add(line);
+    i++;
+  }
+
+  flushPlain();
+  return html.toString();
+}
+
+bool _isNodeSeekTabsStart(String line) {
+  final trimmed = line.trim();
+  return trimmed == ':::: tabs' || trimmed.startsWith(':::: tabs ');
+}
+
+bool _isNodeSeekTabItemStart(String line) {
+  return line.trimLeft().startsWith('::: tab-item');
+}
+
+bool _isFenceLine(String line) {
+  final trimmed = line.trimLeft();
+  return trimmed.startsWith('```') || trimmed.startsWith('~~~');
+}
+
+String? _nodeSeekTabsToHtml(List<String> blockLines) {
+  final tabs = <({String title, String body})>[];
+  var i = 0;
+
+  while (i < blockLines.length) {
+    final line = blockLines[i];
+    if (!_isNodeSeekTabItemStart(line)) {
+      i++;
+      continue;
+    }
+
+    final title = line.trimLeft().substring('::: tab-item'.length).trim();
+    final body = <String>[];
+    var inFence = false;
+    i++;
+    while (i < blockLines.length) {
+      final bodyLine = blockLines[i];
+      if (_isFenceLine(bodyLine)) inFence = !inFence;
+      if (!inFence && bodyLine.trim() == ':::') break;
+      body.add(bodyLine);
+      i++;
+    }
+    if (i < blockLines.length && blockLines[i].trim() == ':::') i++;
+
+    if (title.isNotEmpty) {
+      tabs.add((title: title, body: body.join('\n').trim()));
+    }
+  }
+
+  if (tabs.isEmpty) return null;
+
+  final html = StringBuffer('<div class="nsk-magic-tabs enabled">');
+  for (var i = 0; i < tabs.length; i++) {
+    final tab = tabs[i];
+    final activeClass = i == 0 ? ' is-active' : '';
+    html
+      ..write('<div class="nsk-magic-tab-title$activeClass">')
+      ..write(const HtmlEscape().convert(tab.title))
+      ..write('</div><div class="nsk-magic-tab-body">')
+      ..write(_markdownToHtmlWithNodeSeekBlocks(tab.body))
+      ..write('</div>');
+  }
+  html.write('</div>');
+  return html.toString();
 }
 
 String _convertSoftBreaks(String text) {

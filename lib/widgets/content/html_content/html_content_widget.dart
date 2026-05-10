@@ -28,6 +28,7 @@ import 'builders/lazy_video_builder.dart';
 import 'builders/image_grid_builder.dart';
 import 'builders/combined_decorator_overlay.dart';
 import 'builders/mention_builder.dart';
+import 'builders/node_seek_tabs_builder.dart';
 import 'builders/scan_boundary.dart';
 import 'current_post_scope.dart';
 import 'image_utils.dart';
@@ -117,8 +118,7 @@ class HtmlContent extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<HtmlContent> createState() =>
-      _HtmlContentState();
+  ConsumerState<HtmlContent> createState() => _HtmlContentState();
 }
 
 class _HtmlContentState extends ConsumerState<HtmlContent> {
@@ -715,6 +715,17 @@ class _HtmlContentState extends ConsumerState<HtmlContent> {
         theme: theme,
         element: element,
         galleryInfo: _galleryInfo,
+      );
+    }
+
+    // 处理 NodeSeek 的 :::: tabs / ::: tab-item 容器。
+    if (element.localName == 'div' &&
+        element.classes.contains('nsk-magic-tabs')) {
+      return buildNodeSeekTabs(
+        context: context,
+        element: element,
+        htmlBuilder: htmlBuilder,
+        textStyle: widget.textStyle,
       );
     }
 

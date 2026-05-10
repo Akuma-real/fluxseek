@@ -33,6 +33,232 @@ Widget buildCodeBlock({
   );
 }
 
+bool _isAnsiCodeClass(String className) {
+  return RegExp(r'(^|\s)(?:lang|language)-ansi(\s|$)').hasMatch(className);
+}
+
+String _displayLanguageFromClass(String className) {
+  final match = RegExp(r'(?:lang|language)-([\w-]+)').firstMatch(className);
+  return match == null ? 'TEXT' : match.group(1)!.toUpperCase();
+}
+
+TextSpan _buildAnsiTextSpan(
+  String text,
+  TextStyle baseStyle, {
+  required Color defaultForeground,
+  required Color defaultBackground,
+}) {
+  final spans = <TextSpan>[];
+  final state = _AnsiTextState();
+  final pattern = RegExp('\x1B\\[([0-9;]*)m');
+  var cursor = 0;
+
+  for (final match in pattern.allMatches(text)) {
+    if (match.start > cursor) {
+      spans.add(
+        TextSpan(
+          text: text.substring(cursor, match.start),
+          style: state.toTextStyle(
+            baseStyle,
+            defaultForeground: defaultForeground,
+            defaultBackground: defaultBackground,
+          ),
+        ),
+      );
+    }
+
+    final rawCodes = match.group(1);
+    final codes = (rawCodes == null || rawCodes.isEmpty)
+        ? <int>[0]
+        : rawCodes.split(';').map((code) => int.tryParse(code) ?? 0).toList();
+    _applyAnsiCodes(state, codes);
+    cursor = match.end;
+  }
+
+  if (cursor < text.length) {
+    spans.add(
+      TextSpan(
+        text: text.substring(cursor),
+        style: state.toTextStyle(
+          baseStyle,
+          defaultForeground: defaultForeground,
+          defaultBackground: defaultBackground,
+        ),
+      ),
+    );
+  }
+
+  return TextSpan(style: baseStyle, children: spans);
+}
+
+void _applyAnsiCodes(_AnsiTextState state, List<int> codes) {
+  if (codes.isEmpty) {
+    state.reset();
+    return;
+  }
+
+  for (var i = 0; i < codes.length; i++) {
+    final code = codes[i];
+    switch (code) {
+      case 0:
+        state.reset();
+      case 1:
+        state.bold = true;
+      case 2:
+        state.dim = true;
+      case 3:
+        state.italic = true;
+      case 4:
+        state.underline = true;
+      case 7:
+        state.inverse = true;
+      case 22:
+        state
+          ..bold = false
+          ..dim = false;
+      case 23:
+        state.italic = false;
+      case 24:
+        state.underline = false;
+      case 27:
+        state.inverse = false;
+      case 39:
+        state.foreground = null;
+      case 49:
+        state.background = null;
+      case >= 30 && <= 37:
+        state.foreground = _ansiBasicColor(code - 30, bright: false);
+      case >= 40 && <= 47:
+        state.background = _ansiBasicColor(code - 40, bright: false);
+      case >= 90 && <= 97:
+        state.foreground = _ansiBasicColor(code - 90, bright: true);
+      case >= 100 && <= 107:
+        state.background = _ansiBasicColor(code - 100, bright: true);
+      case 38:
+        final parsed = _parseExtendedAnsiColor(codes, i);
+        if (parsed != null) {
+          state.foreground = parsed.color;
+          i = parsed.nextIndex;
+        }
+      case 48:
+        final parsed = _parseExtendedAnsiColor(codes, i);
+        if (parsed != null) {
+          state.background = parsed.color;
+          i = parsed.nextIndex;
+        }
+    }
+  }
+}
+
+({Color color, int nextIndex})? _parseExtendedAnsiColor(
+  List<int> codes,
+  int start,
+) {
+  if (start + 2 >= codes.length) return null;
+  final mode = codes[start + 1];
+  if (mode == 5) {
+    return (color: _ansi256Color(codes[start + 2]), nextIndex: start + 2);
+  }
+  if (mode == 2 && start + 4 < codes.length) {
+    return (
+      color: Color.fromARGB(
+        255,
+        codes[start + 2].clamp(0, 255).toInt(),
+        codes[start + 3].clamp(0, 255).toInt(),
+        codes[start + 4].clamp(0, 255).toInt(),
+      ),
+      nextIndex: start + 4,
+    );
+  }
+  return null;
+}
+
+Color _ansiBasicColor(int index, {required bool bright}) {
+  const normal = <Color>[
+    Color(0xff1f2328),
+    Color(0xffd1242f),
+    Color(0xff1a7f37),
+    Color(0xff9a6700),
+    Color(0xff0969da),
+    Color(0xff8250df),
+    Color(0xff1b7c83),
+    Color(0xffe6edf3),
+  ];
+  const vivid = <Color>[
+    Color(0xff57606a),
+    Color(0xffff7b72),
+    Color(0xff7ee787),
+    Color(0xffffd33d),
+    Color(0xff79c0ff),
+    Color(0xffd2a8ff),
+    Color(0xff56d4dd),
+    Color(0xffffffff),
+  ];
+  return (bright ? vivid : normal)[index.clamp(0, 7).toInt()];
+}
+
+Color _ansi256Color(int code) {
+  final value = code.clamp(0, 255).toInt();
+  if (value < 16) {
+    return _ansiBasicColor(value % 8, bright: value >= 8);
+  }
+  if (value >= 232) {
+    final level = 8 + (value - 232) * 10;
+    return Color.fromARGB(255, level, level, level);
+  }
+
+  final cube = value - 16;
+  int channel(int n) {
+    final level = (cube ~/ n) % 6;
+    return level == 0 ? 0 : 55 + level * 40;
+  }
+
+  return Color.fromARGB(255, channel(36), channel(6), channel(1));
+}
+
+class _AnsiTextState {
+  Color? foreground;
+  Color? background;
+  bool bold = false;
+  bool dim = false;
+  bool italic = false;
+  bool underline = false;
+  bool inverse = false;
+
+  void reset() {
+    foreground = null;
+    background = null;
+    bold = false;
+    dim = false;
+    italic = false;
+    underline = false;
+    inverse = false;
+  }
+
+  TextStyle toTextStyle(
+    TextStyle baseStyle, {
+    required Color defaultForeground,
+    required Color defaultBackground,
+  }) {
+    var fg = foreground ?? defaultForeground;
+    var bg = background;
+    if (dim) fg = fg.withValues(alpha: 0.65);
+    if (inverse) {
+      final originalFg = fg;
+      fg = bg ?? defaultBackground;
+      bg = originalFg;
+    }
+
+    return baseStyle.copyWith(
+      color: fg,
+      backgroundColor: bg,
+      fontWeight: bold ? FontWeight.w700 : FontWeight.normal,
+      fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+      decoration: underline ? TextDecoration.underline : TextDecoration.none,
+    );
+  }
+}
+
 class _CodeBlockWidget extends StatefulWidget {
   final dynamic codeElement;
   final bool screenshotMode;
@@ -99,9 +325,10 @@ class _CodeBlockWidgetState extends State<_CodeBlockWidget> {
   Future<void> _loadHighlight() async {
     final text = _code;
     final className = widget.codeElement.className as String;
+    if (_isAnsiCodeClass(className)) return;
     String? language;
     if (className.isNotEmpty) {
-      final match = RegExp(r'lang-(\w+)').firstMatch(className);
+      final match = RegExp(r'(?:lang|language)-([\w-]+)').firstMatch(className);
       if (match != null) {
         language = match.group(1);
       }
@@ -124,17 +351,14 @@ class _CodeBlockWidgetState extends State<_CodeBlockWidget> {
       final className = widget.codeElement.className as String;
       final theme = Theme.of(context);
       final isDark = theme.brightness == Brightness.dark;
+      final isAnsi = _isAnsiCodeClass(className);
 
-      String displayLanguage = 'TEXT';
-      if (className.isNotEmpty) {
-        final match = RegExp(r'lang-(\w+)').firstMatch(className);
-        if (match != null) {
-          displayLanguage = match.group(1)!.toUpperCase();
-        }
-      }
+      final displayLanguage = _displayLanguageFromClass(className);
 
       final bgColor = isDark
           ? const Color(0xff282a36)
+          : isAnsi
+          ? const Color(0xff282c34)
           : const Color(0xfff6f8fa);
       final borderColor = theme.colorScheme.outlineVariant.withValues(
         alpha: 0.3,
@@ -164,7 +388,14 @@ class _CodeBlockWidgetState extends State<_CodeBlockWidget> {
           : contentHeight.clamp(0.0, 400.0);
 
       // 构建代码 TextSpan
-      final codeSpan = _tokens != null
+      final codeSpan = isAnsi
+          ? _buildAnsiTextSpan(
+              text,
+              baseStyle,
+              defaultForeground: const Color(0xffe6edf3),
+              defaultBackground: const Color(0xff282c34),
+            )
+          : _tokens != null
           ? HighlighterService.instance.tokensToSpan(
               _tokens!,
               isDark: isDark,

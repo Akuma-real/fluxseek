@@ -580,9 +580,12 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
   void _recordBrowsingHistory(String title) {
     if (_lastRecordedHistoryTopicId == widget.topicId) return;
     _lastRecordedHistoryTopicId = widget.topicId;
-    ref
-        .read(webHistoryProvider.notifier)
-        .record(ShareUtils.topicUrl(widget.topicId), title);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(webHistoryProvider.notifier)
+          .record(ShareUtils.topicUrl(widget.topicId), title);
+    });
   }
 
   void _switchToMasterDetail(TopicDetail? detail) {
