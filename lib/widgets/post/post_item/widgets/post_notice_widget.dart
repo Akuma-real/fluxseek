@@ -101,7 +101,7 @@ class PostNoticeWidget extends StatelessWidget {
 
   Widget _buildTextNotice(
     ThemeData theme, {
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required String text,
   }) {

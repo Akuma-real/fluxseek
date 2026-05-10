@@ -60,7 +60,7 @@ class ShareUtils {
     final fileName = p.basename(file.path);
     final ext = p.extension(fileName).replaceFirst('.', '');
 
-    final outputPath = await FilePicker.platform.saveFile(
+    final outputPath = await FilePicker.saveFile(
       dialogTitle: S.current.share_selectSaveLocation,
       fileName: fileName,
       type: ext.isNotEmpty ? FileType.custom : FileType.any,

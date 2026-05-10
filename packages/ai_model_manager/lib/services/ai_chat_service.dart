@@ -39,7 +39,8 @@ class ThinkingDelta extends AiChatChunk {
 
 /// Token 用量报告，流结束时发送
 class UsageReport extends AiChatChunk {
-  const UsageReport({this.promptTokens, this.responseTokens, this.cachedTokens});
+  const UsageReport(
+      {this.promptTokens, this.responseTokens, this.cachedTokens});
   final int? promptTokens;
   final int? responseTokens;
   final int? cachedTokens;
@@ -93,13 +94,16 @@ class AiChatService {
     required List<AiChatMessage> messages,
     String? systemPrompt,
     ThinkingConfig thinkingConfig = const ThinkingConfig(),
+
     /// 仅图像生成路径使用：话题上下文摘要（含标题+正文楼层），
     /// 会被前置拼接到 image prompt 之前，让生成的图与话题相关。
     /// 文本聊天路径忽略此参数（话题上下文走 [messages] 注入）。
     String? imagePromptContext,
+
     /// 仅图像生成路径使用：用户在 PromptPreset 维度面板选择的 aspect。
     /// 取值 '1:1' / '16:9' / '9:16' / '4:3' / '3:4'，null = 用模型默认。
     String? imageAspect,
+
     /// 可取消的 HTTP client。外部 close 后底层 HTTP 连接立即断开，
     /// 不再等 stream 自然结束。未传则 fallback 到 [bridgedClient]。
     http.Client? requestClient,
@@ -344,15 +348,16 @@ class AiChatService {
             );
           } else {
             // 504/502/503 自动重试 3 次（绕过 openai_dart 4.x 对 POST 不重试的限制）
-            final response = await _withServerErrorRetry(() => client.images.edit(
-              o.ImageEditRequest(
-                model: model,
-                prompt: prompt,
-                image: bytes,
-                imageFilename: 'input.${_extFromMime(att.mimeType)}',
-                size: size,
-              ),
-            ));
+            final response =
+                await _withServerErrorRetry(() => client.images.edit(
+                      o.ImageEditRequest(
+                        model: model,
+                        prompt: prompt,
+                        image: bytes,
+                        imageFilename: 'input.${_extFromMime(att.mimeType)}',
+                        size: size,
+                      ),
+                    ));
             yield* _emitImageResponse(response);
           }
         } else {
@@ -368,9 +373,11 @@ class AiChatService {
               ),
             );
           } else {
-            final response = await _withServerErrorRetry(() => client.images.generate(
-              o.ImageGenerationRequest(model: model, prompt: prompt, size: size),
-            ));
+            final response =
+                await _withServerErrorRetry(() => client.images.generate(
+                      o.ImageGenerationRequest(
+                          model: model, prompt: prompt, size: size),
+                    ));
             yield* _emitImageResponse(response);
           }
         }
@@ -774,13 +781,17 @@ class AiChatService {
     try {
       // 复用普通 chat 的消息转换（带附件作为输入图，也支持 image edit 场景）；
       // 但要把最后一条 user 文本替换成增强版 prompt（拼了话题上下文）
-      final messagesWithEnhancedPrompt = _replaceLastUserContent(messages, prompt);
+      final messagesWithEnhancedPrompt =
+          _replaceLastUserContent(messages, prompt);
       final contents = _toGeminiContents(messagesWithEnhancedPrompt);
       final request = g.GenerateContentRequest(
         contents: contents,
         generationConfig: g.GenerationConfig(
           // 关键：要求模型同时输出图像和文本（image-only 会拒绝纯文本 prompt）
-          responseModalities: const ['IMAGE', 'TEXT'],
+          responseModalities: const [
+            g.ResponseModality.image,
+            g.ResponseModality.text,
+          ],
           // aspect ratio 用 imageConfig.aspectRatio 透传（gemini-3-image preview 支持）
           imageConfig: imageAspect != null
               ? g.ImageConfig(aspectRatio: imageAspect)
@@ -805,7 +816,8 @@ class AiChatService {
               final cleaned = blob.data.replaceAll(RegExp(r'\s'), '');
               try {
                 final bytes = base64Decode(cleaned);
-                final mime = blob.mimeType.isEmpty ? 'image/png' : blob.mimeType;
+                final mime =
+                    blob.mimeType.isEmpty ? 'image/png' : blob.mimeType;
                 final localPath = await _saveImageBytes(bytes, mime);
                 yield ImageGenerated(localPath: localPath, mimeType: mime);
               } catch (_) {
@@ -846,29 +858,30 @@ class AiChatService {
     http.Client? httpClient,
   }) async* {
     final client = a.AnthropicClient(
-      apiKey: apiKey,
-      baseUrl: baseUrl.isEmpty ? null : _trimTrailingSlash(baseUrl),
-      client: httpClient ?? bridgedClient,
+      config: a.AnthropicConfig(
+        authProvider: a.ApiKeyProvider(apiKey),
+        baseUrl: baseUrl.isEmpty
+            ? 'https://api.anthropic.com'
+            : _trimTrailingSlash(baseUrl),
+      ),
+      httpClient: httpClient ?? bridgedClient,
     );
 
     final budgetTokens = _toAnthropicBudget(thinkingConfig);
-    final request = a.CreateMessageRequest(
-      model: a.Model.modelId(model),
+    final request = a.MessageCreateRequest(
+      model: model,
       messages: _toAnthropicMessages(messages),
       maxTokens: thinkingConfig.isEnabled ? 16384 : 8192,
       system: systemPrompt == null
           ? null
-          : a.CreateMessageRequestSystem.blocks([
-              a.Block.text(
+          : a.SystemPrompt.blocks([
+              a.SystemTextBlock(
                 text: systemPrompt,
                 cacheControl: const a.CacheControlEphemeral(),
               ),
             ]),
       thinking: budgetTokens != null
-          ? a.ThinkingConfig.enabled(
-              type: a.ThinkingConfigEnabledType.enabled,
-              budgetTokens: budgetTokens,
-            )
+          ? a.ThinkingEnabled(budgetTokens: budgetTokens)
           : null,
     );
 
@@ -876,17 +889,17 @@ class AiChatService {
     int? responseTokens;
     int? cachedTokens;
     try {
-      await for (final event in client.createMessageStream(request: request)) {
+      await for (final event in client.messages.createStream(request)) {
         switch (event) {
           case final a.MessageStartEvent e:
-            promptTokens = e.message.usage?.inputTokens;
-            responseTokens = e.message.usage?.outputTokens;
-            cachedTokens = e.message.usage?.cacheReadInputTokens;
+            promptTokens = e.message.usage.inputTokens;
+            responseTokens = e.message.usage.outputTokens;
+            cachedTokens = e.message.usage.cacheReadInputTokens;
           case final a.ContentBlockDeltaEvent e:
             switch (e.delta) {
-              case final a.TextBlockDelta d:
+              case final a.TextDelta d:
                 if (d.text.isNotEmpty) yield TextDelta(d.text);
-              case final a.ThinkingBlockDelta d:
+              case final a.ThinkingDelta d:
                 if (d.thinking.isNotEmpty) yield ThinkingDelta(d.thinking);
               default:
                 break;
@@ -901,7 +914,7 @@ class AiChatService {
     } catch (e) {
       throw _mapError(e);
     } finally {
-      client.endSession();
+      client.close();
     }
 
     if (promptTokens != null || responseTokens != null) {
@@ -1072,58 +1085,56 @@ class AiChatService {
 
   // ────────────────────────── 消息转换：Anthropic ──────────────────────────
 
-  List<a.Message> _toAnthropicMessages(List<AiChatMessage> history) {
-    final result = <a.Message>[];
+  List<a.InputMessage> _toAnthropicMessages(List<AiChatMessage> history) {
+    final result = <a.InputMessage>[];
     for (final msg in history) {
-      final isContext = msg.id == 'context-user' || msg.id == 'context-assistant';
+      final isContext =
+          msg.id == 'context-user' || msg.id == 'context-assistant';
       switch (msg.role) {
         case ChatRole.system:
           continue;
         case ChatRole.user:
-          result.add(
-            a.Message(
-              role: a.MessageRole.user,
-              content: _toAnthropicContent(msg, cache: isContext),
-            ),
-          );
+          result.add(a.InputMessage(
+            role: a.MessageRole.user,
+            content: _toAnthropicContent(msg, cache: isContext),
+          ));
         case ChatRole.assistant:
           if (msg.content.isEmpty) continue;
           result.add(
-            a.Message(
-              role: a.MessageRole.assistant,
-              content: isContext
-                  ? a.MessageContent.blocks([
-                      a.Block.text(
-                        text: msg.content,
-                        cacheControl: const a.CacheControlEphemeral(),
-                      ),
-                    ])
-                  : a.MessageContent.text(msg.content),
-            ),
+            isContext
+                ? a.InputMessage.assistantBlocks([
+                    a.InputContentBlock.text(
+                      msg.content,
+                      cacheControl: const a.CacheControlEphemeral(),
+                    ),
+                  ])
+                : a.InputMessage.assistant(msg.content),
           );
       }
     }
     return result;
   }
 
-  a.MessageContent _toAnthropicContent(AiChatMessage msg,
-      {bool cache = false}) {
+  a.MessageContent _toAnthropicContent(
+    AiChatMessage msg, {
+    bool cache = false,
+  }) {
     final attachments = msg.attachments;
     if (attachments == null || attachments.isEmpty) {
       if (cache) {
         return a.MessageContent.blocks([
-          a.Block.text(
-            text: msg.content,
+          a.InputContentBlock.text(
+            msg.content,
             cacheControl: const a.CacheControlEphemeral(),
           ),
         ]);
       }
       return a.MessageContent.text(msg.content);
     }
-    final blocks = <a.Block>[
+    final blocks = <a.InputContentBlock>[
       if (msg.content.isNotEmpty)
-        a.Block.text(
-          text: msg.content,
+        a.InputContentBlock.text(
+          msg.content,
           cacheControl: cache ? const a.CacheControlEphemeral() : null,
         ),
       for (final att in attachments)
@@ -1133,50 +1144,40 @@ class AiChatService {
     return a.MessageContent.blocks(blocks);
   }
 
-  a.Block? _anthropicImageBlock(AiChatAttachment att) {
+  a.InputContentBlock? _anthropicImageBlock(AiChatAttachment att) {
     final mediaType = _toAnthropicMediaType(att.mimeType);
     if (mediaType == null) return null;
     final remote = att.remoteUrl;
     if (remote != null && remote.isNotEmpty) {
-      return a.Block.image(
-        source: a.ImageBlockSource.urlImageSource(type: 'url', url: remote),
-      );
+      return a.InputContentBlock.image(a.ImageSource.url(remote));
     }
     final base64Data = att.base64Data;
     if (base64Data != null && base64Data.isNotEmpty) {
-      return a.Block.image(
-        source: a.ImageBlockSource.base64ImageSource(
-          type: 'base64',
-          mediaType: mediaType,
-          data: base64Data,
-        ),
+      return a.InputContentBlock.image(
+        a.ImageSource.base64(data: base64Data, mediaType: mediaType),
       );
     }
     final localPath = att.localPath;
     if (localPath != null && localPath.isNotEmpty) {
       final bytes = File(localPath).readAsBytesSync();
-      return a.Block.image(
-        source: a.ImageBlockSource.base64ImageSource(
-          type: 'base64',
-          mediaType: mediaType,
-          data: base64Encode(bytes),
-        ),
+      return a.InputContentBlock.image(
+        a.ImageSource.base64(data: base64Encode(bytes), mediaType: mediaType),
       );
     }
     return null;
   }
 
-  a.Base64ImageSourceMediaType? _toAnthropicMediaType(String mime) {
+  a.ImageMediaType? _toAnthropicMediaType(String mime) {
     switch (mime.toLowerCase()) {
       case 'image/jpeg':
       case 'image/jpg':
-        return a.Base64ImageSourceMediaType.imageJpeg;
+        return a.ImageMediaType.jpeg;
       case 'image/png':
-        return a.Base64ImageSourceMediaType.imagePng;
+        return a.ImageMediaType.png;
       case 'image/gif':
-        return a.Base64ImageSourceMediaType.imageGif;
+        return a.ImageMediaType.gif;
       case 'image/webp':
-        return a.Base64ImageSourceMediaType.imageWebp;
+        return a.ImageMediaType.webp;
     }
     return null;
   }
@@ -1236,7 +1237,7 @@ class AiChatService {
       // 兜底：包含 status 信息的通用错误
       return Exception(error.toString());
     }
-    if (error is a.AnthropicClientException) {
+    if (error is a.AnthropicException) {
       return Exception(error.message);
     }
     return Exception(error.toString());

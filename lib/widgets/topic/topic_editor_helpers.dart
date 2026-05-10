@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pangutext/pangutext.dart';
 
 import '../../models/category.dart';
@@ -347,12 +346,10 @@ class CategoryTrigger extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (faIcon != null)
-                FaIcon(faIcon, size: 14, color: color)
+                Icon(faIcon, size: 14, color: color)
               else if (logoUrl != null && logoUrl.isNotEmpty)
                 Image(
-                  image: appImageProvider(
-                    UrlHelper.resolveUrlWithCdn(logoUrl),
-                  ),
+                  image: appImageProvider(UrlHelper.resolveUrlWithCdn(logoUrl)),
                   width: 16,
                   height: 16,
                   fit: BoxFit.contain,

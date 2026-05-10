@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../l10n/s.dart';
 import '../../models/category.dart';
 import '../../models/search_filter.dart';
@@ -666,7 +665,7 @@ class _SearchFilterPanelState extends ConsumerState<SearchFilterPanel> {
                                   size: 14,
                                   color: colorScheme.primary,
                                 )
-                              : FaIcon(
+                              : Icon(
                                   tagInfo!.icon,
                                   size: 12,
                                   color: tagInfo.color,
@@ -842,7 +841,7 @@ class _CategoryFilterItem extends StatelessWidget {
               else if (faIcon != null)
                 Padding(
                   padding: const EdgeInsets.only(right: 6),
-                  child: FaIcon(faIcon, size: 12, color: color),
+                  child: Icon(faIcon, size: 12, color: color),
                 )
               else if (category?.readRestricted ?? false)
                 Padding(

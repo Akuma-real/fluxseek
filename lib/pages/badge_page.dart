@@ -261,9 +261,12 @@ class _BadgePageState extends ConsumerState<BadgePage> {
 
   Widget _buildIconFallback(Badge badge, Color color, double size) {
     final iconData = badge.icon != null && badge.icon!.isNotEmpty
-        ? (FontAwesomeHelper.getIcon(badge.icon!) ?? FontAwesomeIcons.medal)
-        : FontAwesomeIcons.medal;
-    return FaIcon(iconData, size: size, color: color);
+        ? FontAwesomeHelper.getIcon(badge.icon!)
+        : null;
+    if (iconData != null) {
+      return Icon(iconData, size: size, color: color);
+    }
+    return FaIcon(FontAwesomeIcons.medal, size: size, color: color);
   }
 }
 

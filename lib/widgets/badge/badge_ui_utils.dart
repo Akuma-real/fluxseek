@@ -105,7 +105,7 @@ class BadgeUIUtils {
   // Icons & Text
   // ---------------------------------------------------------------------------
 
-  static IconData getBadgeIcon(BadgeType type) {
+  static FaIconData getBadgeIcon(BadgeType type) {
     // Can differentiate icons if needed, currently uniform
     switch (type) {
       case BadgeType.gold:

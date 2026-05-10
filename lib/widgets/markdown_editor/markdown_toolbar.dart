@@ -880,7 +880,7 @@ class MarkdownToolbarState extends State<MarkdownToolbar> {
   /// 选择并上传附件（支持任意文件类型）
   Future<void> _pickAndUploadFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles();
+      final result = await FilePicker.pickFiles();
       if (result == null || result.files.isEmpty) return;
       final file = result.files.first;
       if (file.path == null) return;
@@ -1180,7 +1180,7 @@ class MarkdownToolbarState extends State<MarkdownToolbar> {
 }
 
 class _ToolbarButton extends StatelessWidget {
-  final IconData icon;
+  final FaIconData icon;
   final VoidCallback? onPressed;
   final bool isLoading;
   final String? tooltip;

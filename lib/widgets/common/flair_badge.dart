@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../services/app_cache_manager.dart';
 import '../../services/emoji_handler.dart';
 import '../../utils/svg_utils.dart';
@@ -117,7 +116,7 @@ class FlairBadge extends StatelessWidget {
               ? BoxDecoration(color: bgColor, shape: BoxShape.circle)
               : null,
           child: Center(
-            child: FaIcon(iconData, size: iconSize, color: iconColor),
+            child: Icon(iconData, size: iconSize, color: iconColor),
           ),
         ),
       );

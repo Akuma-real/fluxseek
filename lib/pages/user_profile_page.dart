@@ -2219,7 +2219,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  BadgeUIUtils.getBadgeIcon(badgeType),
+                  BadgeUIUtils.getBadgeIcon(badgeType).data,
                   size: 14,
                   color: color,
                 ),

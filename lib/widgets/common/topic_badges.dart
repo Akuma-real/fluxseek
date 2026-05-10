@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/category.dart';
 import '../../utils/url_helper.dart';
 import '../../services/app_cache_manager.dart';
@@ -78,7 +77,7 @@ class TagBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (tagInfo != null) ...[
-            FaIcon(tagInfo.icon, size: size.iconSize, color: tagInfo.color),
+            Icon(tagInfo.icon, size: size.iconSize, color: tagInfo.color),
             const SizedBox(width: 4),
           ],
           Text(name, style: text),
@@ -131,7 +130,7 @@ class RemovableTagBadge extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (tagInfo != null) ...[
-                FaIcon(tagInfo.icon, size: size.iconSize, color: tagInfo.color),
+                Icon(tagInfo.icon, size: size.iconSize, color: tagInfo.color),
                 const SizedBox(width: 4),
               ],
               Text(
@@ -273,9 +272,7 @@ class CategoryBadge extends StatelessWidget {
             )
           else if (logoUrl != null && logoUrl!.isNotEmpty)
             Image(
-              image: appImageProvider(
-                UrlHelper.resolveUrlWithCdn(logoUrl!),
-              ),
+              image: appImageProvider(UrlHelper.resolveUrlWithCdn(logoUrl!)),
               width: size.iconSize,
               height: size.iconSize,
               fit: BoxFit.contain,

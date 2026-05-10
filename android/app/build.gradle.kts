@@ -183,10 +183,10 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
     implementation("com.google.firebase:firebase-crashlytics-ndk")
     implementation("com.google.firebase:firebase-analytics")
-    implementation("org.json:json:20240303")
-    implementation("androidx.webkit:webkit:1.15.0")
+    implementation("org.json:json:20251224")
+    implementation("androidx.webkit:webkit:1.16.0")
 }
