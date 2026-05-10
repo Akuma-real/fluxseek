@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_avif/flutter_avif.dart';
+import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart'
+    as avif_platform;
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../l10n/s.dart';
 import 'app_cache_manager.dart';
@@ -209,7 +211,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
         headers: headers ?? const {},
       );
       final bytes = await file.readAsBytes();
-      final frames = await decodeAvif(bytes);
+      final frames = await _decodeAvifFrames(bytes);
       srcImage = frames.first.image;
       for (int i = 1; i < frames.length; i++) {
         frames[i].image.dispose();
@@ -270,7 +272,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
 
   // ==================== 完整解码路径 ====================
 
-  Future<List<AvifFrameInfo>> _decodeAvif(AvifImageProvider key) async {
+  Future<List<_AvifFrameInfo>> _decodeAvif(AvifImageProvider key) async {
     await _avifDecodeSemaphore.acquire();
     try {
       final manager = key.cacheManager ?? AppCacheManager();
@@ -279,7 +281,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
         headers: key.headers ?? const {},
       );
       final bytes = await file.readAsBytes();
-      final frames = await decodeAvif(bytes);
+      final frames = await _decodeAvifFrames(bytes);
       if (key.singleFrame && frames.length > 1) {
         for (int i = 1; i < frames.length; i++) {
           frames[i].image.dispose();
@@ -316,7 +318,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
 /// 无监听时自动暂停动画，重新添加监听时恢复。
 class _AvifAnimatedImageStreamCompleter extends ImageStreamCompleter {
   _AvifAnimatedImageStreamCompleter({
-    required Future<List<AvifFrameInfo>> framesLoader,
+    required Future<List<_AvifFrameInfo>> framesLoader,
     required this.scale,
   }) {
     framesLoader.then(
@@ -332,11 +334,11 @@ class _AvifAnimatedImageStreamCompleter extends ImageStreamCompleter {
   }
 
   final double scale;
-  List<AvifFrameInfo>? _frames;
+  List<_AvifFrameInfo>? _frames;
   int _currentFrameIndex = 0;
   Timer? _timer;
 
-  void _handleFrames(List<AvifFrameInfo> frames) {
+  void _handleFrames(List<_AvifFrameInfo> frames) {
     if (frames.isEmpty) {
       reportError(
         context: ErrorDescription(S.current.error_avifDecodeNoFrames),
@@ -388,6 +390,73 @@ class _AvifAnimatedImageStreamCompleter extends ImageStreamCompleter {
       _timer = null;
     }
   }
+}
+
+Future<List<_AvifFrameInfo>> _decodeAvifFrames(Uint8List bytes) async {
+  final codec = _MultiFrameAvifCodec(
+    key: Random().nextInt(4294967296),
+    avifBytes: bytes,
+  );
+  await codec.ready();
+
+  final frames = <_AvifFrameInfo>[];
+  try {
+    for (int i = 0; i < codec.frameCount; i += 1) {
+      frames.add(await codec.getNextFrame());
+    }
+  } finally {
+    codec.dispose();
+  }
+  return frames;
+}
+
+class _MultiFrameAvifCodec {
+  _MultiFrameAvifCodec({required int key, required Uint8List avifBytes})
+    : _key = key.toString() {
+    final avifFfi = avif_platform.FlutterAvifPlatform.api;
+    _ready = avifFfi.initMemoryDecoder(key: _key, avifBytes: avifBytes).then((
+      info,
+    ) {
+      _frameCount = info.imageCount;
+    });
+  }
+
+  final String _key;
+  late final Future<void> _ready;
+  int _frameCount = 1;
+
+  int get frameCount => _frameCount;
+
+  Future<void> ready() => _ready;
+
+  Future<_AvifFrameInfo> getNextFrame() async {
+    final frame = await avif_platform.FlutterAvifPlatform.api.getNextFrame(
+      key: _key,
+    );
+    final completer = Completer<ui.Image>.sync();
+    ui.decodeImageFromPixels(
+      Uint8List.fromList(frame.data),
+      frame.width,
+      frame.height,
+      ui.PixelFormat.rgba8888,
+      completer.complete,
+    );
+    return _AvifFrameInfo(
+      image: await completer.future,
+      duration: Duration(milliseconds: (frame.duration * 1000).round()),
+    );
+  }
+
+  void dispose() {
+    unawaited(avif_platform.FlutterAvifPlatform.api.disposeDecoder(key: _key));
+  }
+}
+
+class _AvifFrameInfo {
+  const _AvifFrameInfo({required this.duration, required this.image});
+
+  final Duration duration;
+  final ui.Image image;
 }
 
 /// 简单的异步信号量，用于限制并发操作数

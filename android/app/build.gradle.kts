@@ -1,5 +1,6 @@
 import java.io.File
 import java.util.Properties
+import org.gradle.api.tasks.Delete
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -89,6 +90,12 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName(releaseBuildSigningName)
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
 
         debug {
@@ -97,6 +104,10 @@ android {
 
         getByName("profile") {
             signingConfig = signingConfigs.getByName(releaseBuildSigningName)
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 
@@ -131,6 +142,35 @@ android {
         }
     }
 }
+
+val androidOnlyFlutterAssetExcludes = listOf(
+    "packages/pro_image_editor/lib/web/web_worker.dart.js",
+    "packages/pro_image_editor/lib/web/web_worker.dart.js.map",
+)
+
+fun configureAndroidOnlyFlutterAssetPruning(buildType: String) {
+    val capitalizedBuildType = buildType.replaceFirstChar { it.uppercaseChar() }
+    val pruneTask = tasks.register<Delete>("prune${capitalizedBuildType}AndroidOnlyFlutterAssets") {
+        description = "Removes web-only Flutter assets from Android $buildType packaging."
+        group = "build"
+        dependsOn("merge${capitalizedBuildType}Assets")
+        mustRunAfter("merge${capitalizedBuildType}Assets")
+        androidOnlyFlutterAssetExcludes.forEach { asset ->
+            delete(layout.buildDirectory.file("intermediates/flutter/$buildType/flutter_assets/$asset"))
+            delete(
+                layout.buildDirectory.file(
+                    "intermediates/assets/$buildType/merge${capitalizedBuildType}Assets/flutter_assets/$asset",
+                ),
+            )
+        }
+    }
+
+    tasks.matching { it.name == "compress${capitalizedBuildType}Assets" }.configureEach {
+        dependsOn(pruneTask)
+    }
+}
+
+listOf("profile", "release").forEach(::configureAndroidOnlyFlutterAssetPruning)
 
 kotlin {
     compilerOptions {

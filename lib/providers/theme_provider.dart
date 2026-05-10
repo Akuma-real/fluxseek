@@ -8,9 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum AppFontFamily {
   /// 跟随系统默认字体
   system,
-
-  /// 内置 MiSans 字体
-  miSans,
 }
 
 /// App Theme State
@@ -40,8 +37,6 @@ class ThemeState {
   /// 获取实际用于 ThemeData 的 fontFamily 字符串
   String? get fontFamilyName {
     switch (fontFamily) {
-      case AppFontFamily.miSans:
-        return 'MiSans';
       case AppFontFamily.system:
         return null;
     }
@@ -114,12 +109,9 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     // Load Dynamic Color
     final useDynamicColor = prefs.getBool(_dynamicColorKey) ?? false;
 
-    // Load Font Family
-    final savedFontFamily = prefs.getString(_fontFamilyKey);
-    AppFontFamily fontFamily = AppFontFamily.system;
-    if (savedFontFamily == 'miSans') {
-      fontFamily = AppFontFamily.miSans;
-    }
+    // Load Font Family. Legacy "miSans" values are intentionally treated as
+    // system to keep Android release APKs lean.
+    final fontFamily = AppFontFamily.system;
 
     // Load Scheme Variant
     final savedVariant = prefs.getString(_schemeVariantKey);
@@ -213,8 +205,6 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     switch (fontFamily) {
       case AppFontFamily.system:
         await _prefs.setString(_fontFamilyKey, 'system');
-      case AppFontFamily.miSans:
-        await _prefs.setString(_fontFamilyKey, 'miSans');
     }
   }
 }

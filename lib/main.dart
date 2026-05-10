@@ -83,8 +83,11 @@ Future<void> main() async {
   // 启用 Edge-to-Edge 模式（小白条沉浸式）
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  // 初始化语法高亮服务（预热 Isolate Worker 和字体）
-  HighlighterService.instance.initialize(); // 不需要 await，后台初始化
+  // 语法高亮只在帖子代码块中需要。延后到首帧之后预热，避免与冷启动
+  // 首屏、SharedPreferences、UA 初始化等关键路径争抢 CPU。
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(HighlighterService.instance.initialize());
+  });
 
   // 初始化本地通知服务（请求权限）
   LocalNotificationService().initialize(); // 不需要 await，后台初始化

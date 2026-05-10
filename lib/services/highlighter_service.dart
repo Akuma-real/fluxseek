@@ -2,10 +2,70 @@ import 'dart:async';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:re_highlight/languages/all.dart';
+import 'package:re_highlight/languages/bash.dart';
+import 'package:re_highlight/languages/c.dart';
+import 'package:re_highlight/languages/cpp.dart';
+import 'package:re_highlight/languages/csharp.dart';
+import 'package:re_highlight/languages/css.dart';
+import 'package:re_highlight/languages/dart.dart';
+import 'package:re_highlight/languages/go.dart';
+import 'package:re_highlight/languages/groovy.dart';
+import 'package:re_highlight/languages/java.dart';
+import 'package:re_highlight/languages/javascript.dart';
+import 'package:re_highlight/languages/json.dart';
+import 'package:re_highlight/languages/kotlin.dart';
+import 'package:re_highlight/languages/lua.dart';
+import 'package:re_highlight/languages/markdown.dart';
+import 'package:re_highlight/languages/objectivec.dart';
+import 'package:re_highlight/languages/perl.dart';
+import 'package:re_highlight/languages/php.dart';
+import 'package:re_highlight/languages/powershell.dart';
+import 'package:re_highlight/languages/python.dart';
+import 'package:re_highlight/languages/r.dart';
+import 'package:re_highlight/languages/ruby.dart';
+import 'package:re_highlight/languages/rust.dart';
+import 'package:re_highlight/languages/scala.dart';
+import 'package:re_highlight/languages/sql.dart';
+import 'package:re_highlight/languages/swift.dart';
+import 'package:re_highlight/languages/typescript.dart';
+import 'package:re_highlight/languages/xml.dart';
+import 'package:re_highlight/languages/yaml.dart';
 import 'package:re_highlight/re_highlight.dart';
 import 'package:re_highlight/styles/github.dart';
 import 'package:re_highlight/styles/github-dark.dart';
+
+final Map<String, Mode> _highlightLanguages = {
+  'bash': langBash,
+  'shell': langBash,
+  'c': langC,
+  'cpp': langCpp,
+  'csharp': langCsharp,
+  'css': langCss,
+  'dart': langDart,
+  'go': langGo,
+  'groovy': langGroovy,
+  'html': langXml,
+  'java': langJava,
+  'javascript': langJavascript,
+  'json': langJson,
+  'kotlin': langKotlin,
+  'lua': langLua,
+  'markdown': langMarkdown,
+  'objectivec': langObjectivec,
+  'perl': langPerl,
+  'php': langPhp,
+  'powershell': langPowershell,
+  'python': langPython,
+  'r': langR,
+  'ruby': langRuby,
+  'rust': langRust,
+  'scala': langScala,
+  'sql': langSql,
+  'swift': langSwift,
+  'typescript': langTypescript,
+  'xml': langXml,
+  'yaml': langYaml,
+};
 
 /// 可序列化的高亮 token
 class HighlightToken {
@@ -120,8 +180,8 @@ class _HighlightWorker {
     // 按需注册语言
     void ensureLanguageRegistered(String lang) {
       if (!registeredLanguages.contains(lang) &&
-          builtinAllLanguages.containsKey(lang)) {
-        highlight.registerLanguage(lang, builtinAllLanguages[lang]!);
+          _highlightLanguages.containsKey(lang)) {
+        highlight.registerLanguage(lang, _highlightLanguages[lang]!);
         registeredLanguages.add(lang);
       }
     }

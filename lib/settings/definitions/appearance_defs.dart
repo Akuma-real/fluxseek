@@ -213,7 +213,6 @@ List<SettingsGroup> buildAppearanceGroups(BuildContext context) {
             final l10n = context.l10n;
             final options = <(String, AppFontFamily)>[
               (l10n.appearance_fontSystem, AppFontFamily.system),
-              ('MiSans', AppFontFamily.miSans),
             ];
 
             return RadioGroup<AppFontFamily>(
@@ -226,15 +225,7 @@ List<SettingsGroup> buildAppearanceGroups(BuildContext context) {
               child: Column(
                 children: [
                   for (final (label, ff) in options)
-                    RadioListTile<AppFontFamily>(
-                      title: Text(
-                        label,
-                        style: ff == AppFontFamily.miSans
-                            ? const TextStyle(fontFamily: 'MiSans')
-                            : null,
-                      ),
-                      value: ff,
-                    ),
+                    RadioListTile<AppFontFamily>(title: Text(label), value: ff),
                 ],
               ),
             );

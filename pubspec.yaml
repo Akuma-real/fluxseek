@@ -87,7 +87,9 @@ dependencies:
   ota_update: ^7.1.0
   app_links: ^7.0.0
   chat_bottom_container: ^0.4.0
-  flutter_avif: ^3.1.0
+  flutter_avif_android: ^3.1.0
+  flutter_avif_linux: ^3.1.0
+  flutter_avif_platform_interface: ^3.1.0
   catcher_2: ^2.1.5
   flutter_timezone: ^5.0.2
 
@@ -123,13 +125,6 @@ flutter:
     - assets/images/
     - assets/ai_brands/
     - assets/icons/thinking/
-
-  fonts:
-    - family: MiSans
-      fonts:
-        - asset: assets/fonts/MiSans-Regular.ttf
-
-
 
 
 
