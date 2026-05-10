@@ -273,3 +273,37 @@ Fixed the failed beta release GitHub Actions run by aligning the release workflo
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: Fix history CSRF categories and filters
+
+**Date**: 2026-05-10
+**Task**: Fix history CSRF categories and filters
+**Branch**: `main`
+
+### Summary
+
+Fixed local browsing history routing and timestamp display, repaired NodeSeek CSRF write retry handling, restored topic category fallback parsing, and restricted topic filter/sort controls to implemented NodeSeek capabilities.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `681bec4` | (see git log) |
+| `49939e2` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
