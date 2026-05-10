@@ -340,3 +340,36 @@ Wrapped _dio.post('/posts.json') with try/catch _throwApiError to match existing
 ### Next Steps
 
 - None - task complete
+
+
+## Session 11: 添加中文对话规范到 spec
+
+**Date**: 2026-05-10
+**Task**: 添加中文对话规范到 spec
+**Branch**: `main`
+
+### Summary
+
+在 .trellis/spec/app/index.md Rules 末尾添加规范：AI 助手与用户对话时使用中文，不要用英文。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `496c687` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

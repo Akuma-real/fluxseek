@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 10
+- **Total Sessions**: 11
 - **Last Active**: 2026-05-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~342 | Active |
+| `journal-1.md` | ~375 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 11 | 2026-05-10 | 添加中文对话规范到 spec | `496c687` | `main` |
 | 10 | 2026-05-10 | Fix createReply CSRF error handling | `90a1bc9` | `main` |
 | 9 | 2026-05-10 | Fix history CSRF categories and filters | `681bec4`, `49939e2` | `main` |
 | 8 | 2026-05-10 | Fix beta release action | `75a7d6d`, `93cbe78`, `4dcbf99` | `main` |
