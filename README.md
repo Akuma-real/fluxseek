@@ -41,7 +41,7 @@ fluxdo 采用 [GPL-3.0](https://github.com/Lingyan000/fluxdo/blob/main/LICENSE) 
 
 ### 前置要求
 
-- Flutter SDK 3.38.9（通过 `.fvmrc` 锁定）
+- Flutter SDK 3.41.9（通过 `.fvmrc` 锁定）
 - Android Studio / Android SDK / Android NDK（Android 构建）
 - Linux 桌面依赖（`flutter run -d linux`）
 - `just`（推荐的本地命令入口）

@@ -9,7 +9,7 @@ fluxseek 是 Flutter workspace 单仓：
 - 开发脚本：`tool/`
 - CI 辅助脚本：`scripts/ci/linux/`
 
-`pubspec.yaml` 是依赖、workspace、asset、font 的源头；`.fvmrc` 锁定 Flutter `3.38.9`。
+`pubspec.yaml` 是依赖、workspace、asset、font 的源头；`.fvmrc` 锁定 Flutter `3.41.9`。
 
 ## Placement Rules
 
