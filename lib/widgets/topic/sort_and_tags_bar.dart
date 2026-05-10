@@ -7,12 +7,9 @@ import '../../../../../l10n/s.dart';
 
 /// 筛选选项定义
 List<(TopicListFilter, String)> get filterOptions => [
-  (TopicListFilter.latest, S.current.topic_filterLatest),
-  (TopicListFilter.newTopics, S.current.topic_filterNew),
-  (TopicListFilter.unread, S.current.topic_filterUnread),
-  (TopicListFilter.unseen, S.current.topic_filterUnseen),
-  (TopicListFilter.top, S.current.topic_filterTop),
-  (TopicListFilter.hot, S.current.topic_filterHot),
+  for (final filter in supportedTopicListFilters)
+    if (filter == TopicListFilter.latest)
+      (TopicListFilter.latest, S.current.topic_filterLatest),
 ];
 
 /// 获取筛选模式的显示名称

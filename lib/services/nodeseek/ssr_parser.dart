@@ -525,9 +525,9 @@ Map<String, dynamic>? _buildRenderedTopicListData(
       );
     }
 
-    final categoryLink = item.querySelector(
-      'a.post-category[href^="/categories/"]',
-    );
+    final categoryLink =
+        item.querySelector('a.post-category[href^="/categories/"]') ??
+        item.querySelector('a[href^="/categories/"]');
     final categoryHref = categoryLink?.attributes['href'] ?? '';
     final categoryKey = categoryHref.startsWith('/categories/')
         ? categoryHref.substring('/categories/'.length)

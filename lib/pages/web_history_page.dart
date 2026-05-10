@@ -251,7 +251,9 @@ class _HistoryCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        TimeUtils.formatRelativeTime(item.visitedAt),
+                        TimeUtils.formatRecentRelativeOrDetailTime(
+                          item.visitedAt,
+                        ),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 11,

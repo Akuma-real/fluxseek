@@ -10,8 +10,7 @@ import '../services/app_cache_manager.dart';
 import 'webview_page.dart';
 import 'webview_login_page.dart';
 import 'bookmarks_page.dart';
-import 'browsing_history_page.dart';
-import 'my_browser_page.dart';
+import 'web_history_page.dart';
 import 'my_topics_page.dart';
 import 'user_profile_page.dart';
 import 'settings_page.dart';
@@ -597,7 +596,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         title: context.l10n.profile_browsingHistory,
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const BrowsingHistoryPage()),
+          MaterialPageRoute(
+            builder: (_) => const WebHistoryPage(isActive: false),
+          ),
         ),
       ),
     ];
@@ -713,15 +714,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          _buildOptionTile(
-            icon: Icons.language_rounded,
-            iconColor: Colors.blue,
-            title: context.l10n.profile_myBrowser,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const MyBrowserPage()),
-            ),
-          ),
           _buildOptionTile(
             icon: Icons.smart_toy_rounded,
             iconColor: Colors.cyan,

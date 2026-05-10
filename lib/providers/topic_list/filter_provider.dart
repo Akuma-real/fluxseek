@@ -6,6 +6,9 @@ import '../theme_provider.dart';
 /// 话题列表筛选模式
 enum TopicListFilter { latest, newTopics, unread, unseen, top, hot }
 
+/// 当前 NodeSeek SSR 列表只可靠支持最新列表。
+const supportedTopicListFilters = [TopicListFilter.latest];
+
 /// TopicListFilter 扩展方法
 extension TopicListFilterX on TopicListFilter {
   /// 获取 API 请求所用的过滤器名称
@@ -66,14 +69,19 @@ class TopicFilterNotifier extends StateNotifier<TopicListFilter> {
 
   static TopicListFilter _fromName(String? name) {
     for (final filter in TopicListFilter.values) {
-      if (filter.name == name) return filter;
+      if (filter.name == name && supportedTopicListFilters.contains(filter)) {
+        return filter;
+      }
     }
     return TopicListFilter.latest;
   }
 
   void setFilter(TopicListFilter filter) {
-    state = filter;
-    _prefs.setString(_key, filter.name);
+    final next = supportedTopicListFilters.contains(filter)
+        ? filter
+        : TopicListFilter.latest;
+    state = next;
+    _prefs.setString(_key, next.name);
   }
 }
 

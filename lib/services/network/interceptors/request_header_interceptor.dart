@@ -1,13 +1,22 @@
 import 'package:dio/dio.dart';
 
 import '../../../constants.dart';
+import '../cookie/csrf_token_service.dart';
 
 /// 请求头拦截器
 /// 负责设置 User-Agent 和 CSRF Token
-/// NodeSeek CSRF 策略：写操作需 `x-csrf-challenge: simple-token` 静态 header
-/// （页面中无 `<meta name="csrf-token">` 标签，2026-05-08 登录态复验确认）
+/// NodeSeek CSRF 策略：写操作保留 `x-csrf-challenge: simple-token`，
+/// 内容写接口同时复用会话中的动态 CSRF token。
 class RequestHeaderInterceptor extends Interceptor {
-  RequestHeaderInterceptor(dynamic cookieSync);
+  RequestHeaderInterceptor(
+    CsrfTokenService csrfTokenService, {
+    String? Function()? readCsrfToken,
+    Future<void> Function()? updateCsrfToken,
+  }) : _readCsrfToken = readCsrfToken ?? (() => csrfTokenService.csrfToken),
+       _updateCsrfToken = updateCsrfToken ?? csrfTokenService.updateCsrfToken;
+
+  final String? Function() _readCsrfToken;
+  final Future<void> Function() _updateCsrfToken;
 
   @override
   Future<void> onRequest(
@@ -28,8 +37,16 @@ class RequestHeaderInterceptor extends Interceptor {
     if (!skipCsrf) {
       final method = options.method.toUpperCase();
       if (method != 'GET') {
-        // NodeSeek 使用静态 x-csrf-challenge header，无需动态获取
         options.headers['x-csrf-challenge'] = 'simple-token';
+        var csrfToken = _readCsrfToken();
+        if ((csrfToken == null || csrfToken.isEmpty) &&
+            _isNodeSeekContentWrite(options)) {
+          await _updateCsrfToken();
+          csrfToken = _readCsrfToken();
+        }
+        if (csrfToken != null && csrfToken.isNotEmpty) {
+          options.headers['X-CSRF-Token'] = csrfToken;
+        }
       }
     }
 
@@ -45,5 +62,9 @@ class RequestHeaderInterceptor extends Interceptor {
     }
 
     handler.next(options);
+  }
+
+  bool _isNodeSeekContentWrite(RequestOptions options) {
+    return options.uri.path.startsWith('/api/content/');
   }
 }

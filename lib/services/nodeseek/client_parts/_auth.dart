@@ -353,8 +353,13 @@ mixin _AuthMixin on _NodeSeekClientBase {
             options.extra['_csrfRetried'] = true;
             options.headers.remove('cookie');
             options.headers.remove('Cookie');
-            // 确保 x-csrf-challenge 头存在
+            _cookieSync.clearCsrfToken();
+            await _cookieSync.updateCsrfToken();
+            final csrfToken = _cookieSync.csrfToken;
             options.headers['x-csrf-challenge'] = 'simple-token';
+            if (csrfToken != null && csrfToken.isNotEmpty) {
+              options.headers['X-CSRF-Token'] = csrfToken;
+            }
             try {
               final response = await _dio.fetch(options);
               return handler.resolve(response);
@@ -568,9 +573,24 @@ mixin _AuthMixin on _NodeSeekClientBase {
   /// 判断响应是否为 BAD CSRF
   /// 服务端返回 403 + '["BAD CSRF"]' 表示 CSRF token 校验失败
   bool _isBadCsrfResponse(dynamic data) {
-    if (data is String) return data == '["BAD CSRF"]';
-    if (data is List) return data.length == 1 && data.first == 'BAD CSRF';
+    if (data is String) return _looksLikeCsrfMessage(data);
+    if (data is List) {
+      return data.any((item) => _looksLikeCsrfMessage(item?.toString()));
+    }
+    if (data is Map) {
+      return _looksLikeCsrfMessage(data['message']?.toString()) ||
+          _looksLikeCsrfMessage(data['error']?.toString()) ||
+          _looksLikeCsrfMessage(data['errors']?.toString());
+    }
     return false;
+  }
+
+  bool _looksLikeCsrfMessage(String? value) {
+    if (value == null) return false;
+    final normalized = value.toLowerCase();
+    return normalized.contains('bad csrf') ||
+        normalized.contains('csrf check error') ||
+        normalized == '["bad csrf"]';
   }
 
   /// 判断响应是否为 NodeSeek 的 high risk action（缺少 x-csrf-challenge header）
@@ -926,13 +946,12 @@ mixin _AuthMixin on _NodeSeekClientBase {
           // NodeSeek 使用 POST /api/account/signOut + x-csrf-challenge header
           await _dio.post(
             '/api/account/signOut',
-            options: Options(
-              headers: {'x-csrf-challenge': 'simple-token'},
-            ),
+            options: Options(headers: {'x-csrf-challenge': 'simple-token'}),
           );
         } else {
           final usernameForLogout =
-              _username ?? await _storage.read(key: NodeSeekClient._usernameKey);
+              _username ??
+              await _storage.read(key: NodeSeekClient._usernameKey);
           if (usernameForLogout != null && usernameForLogout.isNotEmpty) {
             await _dio.delete('/session/$usernameForLogout');
           }

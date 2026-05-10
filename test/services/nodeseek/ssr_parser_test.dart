@@ -70,9 +70,51 @@ void main() {
     expect(parsed!.topicListResponse.topics, hasLength(2));
     expect(parsed.topicListResponse.topics.first.id, 717547);
     expect(parsed.topicListResponse.topics.first.title, '狐狸维权群');
+    expect(parsed.topicListResponse.topics.first.categorySlug, 'info');
+    expect(parsed.topicListResponse.topics.first.categoryName, '情报');
     expect(parsed.topicListResponse.topics.first.replyCount, 12);
     expect(parsed.topicListResponse.topics.first.pinned, isFalse);
     expect(parsed.topicListResponse.moreTopicsUrl, '/page-2');
+  });
+
+  test('parses rendered category links without post-category class', () {
+    const html = '''
+<html>
+  <body>
+    <ul class="post-list">
+      <li class="post-list-item">
+        <a href="/space/42">
+          <img src="/avatar/42.png" data-uid="42" class="avatar-normal">
+        </a>
+        <div class="post-list-content">
+          <div class="post-title"><a href="/post-718001-1">分类样式变化</a></div>
+          <div class="post-info">
+            <span class="info-author"><a href="/space/42">Na</a></span>
+            <span class="info-views"><span>1</span></span>
+            <span class="info-comments-count"><span>0</span></span>
+            <a href="/categories/review" class="category-pill">测评</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <script id="temp-script" type="application/json">
+      {
+        "allCategory": [
+          {"key": "review", "cn_text": "测评", "icon": "dashboard-one"}
+        ]
+      }
+    </script>
+  </body>
+</html>
+''';
+
+    final parsed = parseNodeSeekSsrHtml(html);
+
+    expect(parsed, isNotNull);
+    final topic = parsed!.topicListResponse.topics.single;
+    expect(topic.categorySlug, 'review');
+    expect(topic.categoryName, '测评');
+    expect(topic.categoryId, isNot('0'));
   });
 
   test(

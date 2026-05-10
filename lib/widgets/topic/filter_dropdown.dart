@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/topic_list/filter_provider.dart';
 import '../../providers/topic_list/sort_provider.dart';
-import '../../providers/topic_list/tab_state_provider.dart';
-import '../../providers/message_bus/topic_tracking_providers.dart';
 import 'sort_and_tags_bar.dart';
 import '../common/dismissible_popup_menu.dart';
 import '../../../../../l10n/s.dart';
@@ -35,33 +33,7 @@ class FilterDropdown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    // 读取追踪状态计数
-    final trackingNotifier = ref.watch(topicTrackingStateProvider.notifier);
-    final categoryId = ref.watch(currentTabCategoryIdProvider);
-    // watch state 本身以触发 rebuild
-    ref.watch(topicTrackingStateProvider);
-    final newCount = isLoggedIn
-        ? trackingNotifier.countNew(categoryId: categoryId)
-        : 0;
-    final unreadCount = isLoggedIn
-        ? trackingNotifier.countUnread(categoryId: categoryId)
-        : 0;
-
-    /// 获取筛选选项的显示文本（带计数）
-    String optionLabel(TopicListFilter filter, String baseLabel) {
-      final count = _countForFilter(filter, newCount, unreadCount);
-      if (count > 0) return '$baseLabel ($count)';
-      return baseLabel;
-    }
-
-    /// 获取当前筛选按钮的显示文本（带计数）
-    String buttonLabel() {
-      final base = filterLabel(currentFilter);
-      final count = _countForFilter(currentFilter, newCount, unreadCount);
-      if (count > 0) return '$base ($count)';
-      return base;
-    }
+    final label = filterLabel(currentFilter);
 
     return SwipeDismissiblePopupMenuButton<TopicListFilter>(
       onSelected: onFilterChanged,
@@ -71,11 +43,7 @@ class FilterDropdown extends ConsumerWidget {
       itemBuilder: (context) {
         return filterOptions
             .where(
-              (option) =>
-                  isLoggedIn ||
-                  (option.$1 != TopicListFilter.newTopics &&
-                      option.$1 != TopicListFilter.unread &&
-                      option.$1 != TopicListFilter.unseen),
+              (option) => isLoggedIn || option.$1 == TopicListFilter.latest,
             )
             .map(
               (option) => PopupMenuItem<TopicListFilter>(
@@ -87,7 +55,7 @@ class FilterDropdown extends ConsumerWidget {
                     else
                       const SizedBox(width: 16),
                     const SizedBox(width: 8),
-                    Text(optionLabel(option.$1, option.$2)),
+                    Text(option.$2),
                   ],
                 ),
               ),
@@ -95,25 +63,9 @@ class FilterDropdown extends ConsumerWidget {
             .toList();
       },
       child: style == DropdownStyle.compact
-          ? _buildCompactChild(colorScheme, buttonLabel())
-          : _buildNormalChild(colorScheme, buttonLabel()),
+          ? _buildCompactChild(colorScheme, label)
+          : _buildNormalChild(colorScheme, label),
     );
-  }
-
-  /// 根据筛选类型返回对应计数
-  static int _countForFilter(
-    TopicListFilter filter,
-    int newCount,
-    int unreadCount,
-  ) {
-    switch (filter) {
-      case TopicListFilter.newTopics:
-        return newCount;
-      case TopicListFilter.unread:
-        return unreadCount;
-      default:
-        return 0;
-    }
   }
 
   Widget _buildNormalChild(ColorScheme colorScheme, String label) {
@@ -188,6 +140,7 @@ class OrderDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isActive = currentOrder != TopicSortOrder.defaultOrder;
+    const options = supportedTopicSortOrders;
 
     return SwipeDismissiblePopupMenuButton<TopicSortOrder>(
       onSelected: (order) {
@@ -202,7 +155,7 @@ class OrderDropdown extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       tooltip: S.current.topic_sortTooltip(currentOrder.label),
       itemBuilder: (context) {
-        return TopicSortOrder.values.map((order) {
+        return options.map((order) {
           final isSelected = order == currentOrder;
           return PopupMenuItem<TopicSortOrder>(
             value: order,

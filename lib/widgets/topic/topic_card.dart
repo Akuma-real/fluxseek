@@ -642,6 +642,7 @@ Category? _resolveTopicCategory(Topic topic, Map<int, Category>? categoryMap) {
 
   final fallbackName = topic.categoryName?.trim();
   final fallbackSlug = topic.categorySlug?.trim();
+  final categoryColor = _categoryColorFromSlug(fallbackSlug);
   if ((fallbackName == null || fallbackName.isEmpty) &&
       (fallbackSlug == null || fallbackSlug.isEmpty)) {
     return null;
@@ -652,8 +653,29 @@ Category? _resolveTopicCategory(Topic topic, Map<int, Category>? categoryMap) {
     name: fallbackName == null || fallbackName.isEmpty
         ? fallbackSlug!
         : fallbackName,
-    color: '64748B',
+    color: categoryColor,
     textColor: 'FFFFFF',
     slug: fallbackSlug ?? '',
   );
+}
+
+String _categoryColorFromSlug(String? slug) {
+  switch (slug) {
+    case 'tech':
+      return '2563EB';
+    case 'info':
+      return '7C3AED';
+    case 'review':
+      return 'DC2626';
+    case 'carpool':
+      return '059669';
+    case 'daily':
+      return 'D97706';
+    case 'trade':
+      return '0891B2';
+    case 'expose':
+      return 'BE123C';
+    default:
+      return '64748B';
+  }
 }

@@ -44,6 +44,20 @@ class TimeUtils {
     return S.current.time_yearsAgo((diff.inDays / 365).floor());
   }
 
+  /// 浏览历史时间：近期用相对时间，超过短窗口后显示具体时间。
+  static String formatRecentRelativeOrDetailTime(
+    DateTime? time, {
+    Duration relativeWindow = const Duration(days: 7),
+  }) {
+    if (time == null) return '';
+
+    final diff = DateTime.now().difference(time);
+    if (!diff.isNegative && diff < relativeWindow) {
+      return formatRelativeTime(time);
+    }
+    return formatDetailTime(time);
+  }
+
   /// 格式化时间为详细时间字符串
   /// 格式：2024-01-15 14:30
   /// 适用于详情页等需要精确时间的场景

@@ -28,6 +28,9 @@ enum TopicSortOrder {
   posters,
 }
 
+/// 当前 NodeSeek SSR 列表只可靠支持默认排序。
+const supportedTopicSortOrders = [TopicSortOrder.defaultOrder];
+
 extension TopicSortOrderX on TopicSortOrder {
   /// 返回 API order 参数值，defaultOrder 返回 null
   String? get apiValue {
@@ -80,14 +83,19 @@ class TopicSortOrderNotifier extends StateNotifier<TopicSortOrder> {
 
   static TopicSortOrder _fromName(String? name) {
     for (final order in TopicSortOrder.values) {
-      if (order.name == name) return order;
+      if (order.name == name && supportedTopicSortOrders.contains(order)) {
+        return order;
+      }
     }
     return TopicSortOrder.defaultOrder;
   }
 
   void setOrder(TopicSortOrder order) {
-    state = order;
-    _prefs.setString(_key, order.name);
+    final next = supportedTopicSortOrders.contains(order)
+        ? order
+        : TopicSortOrder.defaultOrder;
+    state = next;
+    _prefs.setString(_key, next.name);
   }
 }
 
