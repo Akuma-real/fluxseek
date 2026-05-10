@@ -170,3 +170,37 @@ Implemented NodeSeek review tabs parsing/rendering, ANSI code block rendering, n
 ### Next Steps
 
 - None - task complete
+
+
+## Session 6: Android release performance optimization
+
+**Date**: 2026-05-10
+**Task**: Android release performance optimization
+**Branch**: `main`
+
+### Summary
+
+Optimized Android release and Linux development workflow: skipped redundant Flutter pub/l10n prep, enabled release shrinking, removed bundled MiSans, trimmed highlighter and AVIF dependencies, pruned Android-unused web assets, documented measurement workflow, and verified analyze/test/release size build.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `16df2e1` | (see git log) |
+| `9659604` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
