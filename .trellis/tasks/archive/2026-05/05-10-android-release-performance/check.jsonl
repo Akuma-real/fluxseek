@@ -1,0 +1,9 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/guides/index.md", "reason": "General thinking guides for verification"}
+{"file": ".trellis/spec/android/index.md", "reason": "Android guideline index for release verification"}
+{"file": ".trellis/spec/android/build-and-release.md", "reason": "Android build and release verification rules"}
+{"file": ".trellis/spec/app/index.md", "reason": "App architecture verification constraints"}
+{"file": ".trellis/spec/tooling/index.md", "reason": "Tooling guideline index for wrapper changes"}
+{"file": ".trellis/spec/tooling/workflow.md", "reason": "Wrapper and generated-code verification rules"}
+{"file": ".trellis/spec/tooling/release.md", "reason": "Release quality gates"}
+{"file": ".trellis/tasks/05-10-android-release-performance/research/android-flutter-performance.md", "reason": "Research-backed acceptance criteria"}
