@@ -353,6 +353,7 @@ mixin _AuthMixin on _NodeSeekClientBase {
             options.extra['_csrfRetried'] = true;
             options.headers.remove('cookie');
             options.headers.remove('Cookie');
+            removeHeaderCaseInsensitive(options.headers, 'X-CSRF-Token');
             _cookieSync.clearCsrfToken();
             await _cookieSync.updateCsrfToken();
             final csrfToken = _cookieSync.csrfToken;

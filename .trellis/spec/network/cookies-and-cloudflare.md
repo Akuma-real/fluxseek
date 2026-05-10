@@ -18,7 +18,7 @@ Current cookie architecture is documented in `docs/cookie-sync-status.md`:
 - Cloudflare detection must use response headers plus body checks, not loose keyword matching alone.
 - After manual Cloudflare verification, sync `cf_clearance` once and retry each original request with fresh CookieJar state.
 - Do not log cookie values, tokens, or raw secrets. Length, names, and boolean presence are acceptable.
-- For NodeSeek content write APIs under `/api/content/`, send `x-csrf-challenge: simple-token` and include the stored `X-CSRF-Token` when available. If a content write has no token yet, refresh through `CsrfTokenService.updateCsrfToken()` before dispatch; on BAD CSRF / `csrf check error`, clear and refresh once before retrying.
+- For NodeSeek content write APIs under `/api/content/`, send `x-csrf-challenge: simple-token` and include the stored `X-CSRF-Token` when available. If a content write has no token yet, refresh through `CsrfTokenService.updateCsrfToken()` before dispatch; on BAD CSRF / `csrf check error`, remove any stale `X-CSRF-Token` header case-insensitively, clear the token cache, and refresh once before retrying.
 
 ## Scenario: NodeSeek Content Write CSRF
 
@@ -33,7 +33,7 @@ Current cookie architecture is documented in `docs/cookie-sync-status.md`:
 ### 3. Contracts
 - Every non-GET keeps `x-csrf-challenge: simple-token` unless `extra['skipCsrf'] == true`.
 - `/api/content/*` writes refresh a missing dynamic token before dispatching and include `X-CSRF-Token` when present.
-- CSRF retry must remove stale manual Cookie headers, clear the token cache, refresh the token, then retry the original request once.
+- CSRF retry must remove stale manual Cookie headers and stale `X-CSRF-Token` headers case-insensitively, clear the token cache, refresh the token, then retry the original request once.
 
 ### 4. Validation & Error Matrix
 - `extra['skipCsrf'] == true` -> do not inject CSRF headers.
