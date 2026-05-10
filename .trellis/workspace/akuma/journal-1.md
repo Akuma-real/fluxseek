@@ -103,3 +103,37 @@ Committed non-rendering release fixes including branding assets, local browsing 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 4: Trellis 工具链收口
+
+**Date**: 2026-05-10
+**Task**: Trellis 工具链收口
+**Branch**: `main`
+
+### Summary
+
+记录 beta.9 版本提交与 Trellis 工作流工具链更新；当前无 active task，工作树干净。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f87d68e` | (see git log) |
+| `dac3abb` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
