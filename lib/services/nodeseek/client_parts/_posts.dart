@@ -49,38 +49,42 @@ mixin _PostsMixin on _NodeSeekClientBase {
       data['reply_to_post_number'] = replyToPostNumber;
     }
 
-    final response = await _dio.post(
-      '/posts.json',
-      data: data,
-      options: Options(contentType: Headers.formUrlEncodedContentType),
-    );
-
-    final respData = response.data;
-
-    // 帖子进入审核队列
-    if (respData is Map && respData['action'] == 'enqueued') {
-      throw PostEnqueuedException(
-        pendingCount: respData['pending_count'] as int? ?? 0,
+    try {
+      final response = await _dio.post(
+        '/posts.json',
+        data: data,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
-    }
 
-    if (respData is Map &&
-        respData.containsKey('post') &&
-        respData['post'] != null) {
-      return Post.fromJson(respData['post'] as Map<String, dynamic>);
-    }
+      final respData = response.data;
 
-    if (respData is Map && respData['id'] != null) {
-      return Post.fromJson(respData as Map<String, dynamic>);
-    }
+      // 帖子进入审核队列
+      if (respData is Map && respData['action'] == 'enqueued') {
+        throw PostEnqueuedException(
+          pendingCount: respData['pending_count'] as int? ?? 0,
+        );
+      }
 
-    if (respData is Map && respData['success'] == false) {
-      final errors = respData['errors'];
-      final msg = errors is List ? errors.join('\n') : errors?.toString();
-      throw Exception(msg ?? S.current.error_replyFailed);
-    }
+      if (respData is Map &&
+          respData.containsKey('post') &&
+          respData['post'] != null) {
+        return Post.fromJson(respData['post'] as Map<String, dynamic>);
+      }
 
-    throw Exception(S.current.error_unknownResponseFormat);
+      if (respData is Map && respData['id'] != null) {
+        return Post.fromJson(respData as Map<String, dynamic>);
+      }
+
+      if (respData is Map && respData['success'] == false) {
+        final errors = respData['errors'];
+        final msg = errors is List ? errors.join('\n') : errors?.toString();
+        throw Exception(msg ?? S.current.error_replyFailed);
+      }
+
+      throw Exception(S.current.error_unknownResponseFormat);
+    } on DioException catch (e) {
+      _throwApiError(e);
+    }
   }
 
   /// 点赞帖子
