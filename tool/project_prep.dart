@@ -3,6 +3,7 @@ import 'dart:io';
 import '_workspace_cli.dart';
 
 const _androidKeyPropertiesPath = 'android/key.properties';
+const _l10nStampPath = '.dart_tool/fluxseek_tooling/l10n.stamp';
 
 Future<void> main(List<String> args) async {
   enterWorkspaceRoot();
@@ -32,15 +33,76 @@ Future<void> main(List<String> args) async {
 
 Future<void> _prepareApp() async {
   await ensurePubGet();
-  await _generateL10n();
+  await _generateL10nIfNeeded();
 }
 
-Future<void> _generateL10n() {
-  return runOrExit(
+Future<void> _generateL10nIfNeeded() async {
+  final stampFile = File(_l10nStampPath);
+  final currentStamp = _buildL10nStamp();
+  if (stampFile.existsSync() &&
+      stampFile.readAsStringSync() == currentStamp &&
+      _l10nOutputsExist()) {
+    stdout.writeln('==> l10n 生成产物未变化，跳过');
+    return;
+  }
+
+  await runOrExit(
     title: '生成 l10n',
     executable: Platform.resolvedExecutable,
     arguments: const ['tool/gen_l10n.dart'],
   );
+
+  stampFile.parent.createSync(recursive: true);
+  stampFile.writeAsStringSync(_buildL10nStamp());
+}
+
+String _buildL10nStamp() {
+  final buffer = StringBuffer();
+  for (final path in _l10nInputPaths()) {
+    final file = File(path);
+    if (!file.existsSync()) {
+      continue;
+    }
+    final stat = file.statSync();
+    buffer.writeln(
+      '$path|${stat.modified.millisecondsSinceEpoch}|${stat.size}',
+    );
+  }
+  return buffer.toString();
+}
+
+bool _l10nOutputsExist() {
+  return const [
+    'lib/l10n/generated/app_localizations_compat.g.dart',
+    'lib/l10n/slang/strings.g.dart',
+    'lib/l10n/slang/strings_en.g.dart',
+    'lib/l10n/slang/strings_zh.g.dart',
+    'lib/l10n/slang/strings_zh_HK.g.dart',
+    'lib/l10n/slang/strings_zh_TW.g.dart',
+  ].every((path) => File(path).existsSync());
+}
+
+List<String> _l10nInputPaths() {
+  final paths = <String>[
+    'pubspec.yaml',
+    'slang.yaml',
+    'tool/gen_l10n.dart',
+    'tool/gen_slang_compat.dart',
+  ];
+
+  final modulesDir = Directory('lib/l10n/modules');
+  if (modulesDir.existsSync()) {
+    final moduleFiles =
+        modulesDir
+            .listSync(recursive: true, followLinks: false)
+            .whereType<File>()
+            .where((file) => file.path.endsWith('.arb'))
+            .map((file) => file.path)
+            .toList()
+          ..sort();
+    paths.addAll(moduleFiles);
+  }
+  return paths;
 }
 
 Future<void> _runDoctor() async {

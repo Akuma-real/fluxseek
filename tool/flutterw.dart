@@ -14,14 +14,15 @@ Future<void> main(List<String> args) async {
     exit(64);
   }
 
-  final command = _firstFlutterCommand(args);
+  final normalizedArgs = _stripJustSeparator(args);
+  final command = _firstFlutterCommand(normalizedArgs);
   if (command != null && _commandsRequiringAppPrep.contains(command)) {
     await runOrExit(
       title: '执行项目预处理',
       executable: Platform.resolvedExecutable,
       arguments: const ['tool/project_prep.dart', 'app'],
     );
-    await _runNativePrepIfNeeded(command, args);
+    await _runNativePrepIfNeeded(command, normalizedArgs);
   } else if (command != null && _commandsRequiringTestPrep.contains(command)) {
     await runOrExit(
       title: '执行测试预处理',
@@ -30,10 +31,63 @@ Future<void> main(List<String> args) async {
     );
   }
 
+  final flutterArgs = command == null
+      ? normalizedArgs
+      : _withNoPubIfPrepared(normalizedArgs, command);
   await runFlutterOrExit(
-    title: '执行 flutter ${args.join(' ')}',
-    arguments: args,
+    title: '执行 flutter ${flutterArgs.join(' ')}',
+    arguments: flutterArgs,
   );
+}
+
+List<String> _stripJustSeparator(List<String> args) {
+  final command = _firstFlutterCommand(args);
+  if (command == null) {
+    return args;
+  }
+  final commandIndex = args.indexOf(command);
+  final separatorIndex = commandIndex + 1;
+  if (separatorIndex < args.length && args[separatorIndex] == '--') {
+    return [...args.take(separatorIndex), ...args.skip(separatorIndex + 1)];
+  }
+  return args;
+}
+
+List<String> _withNoPubIfPrepared(List<String> args, String command) {
+  if (!_commandsRequiringAppPrep.contains(command) &&
+      !_commandsRequiringTestPrep.contains(command)) {
+    return args;
+  }
+  if (args.contains('--no-pub') ||
+      args.contains('--pub') ||
+      args.contains('--help') ||
+      args.contains('-h')) {
+    return args;
+  }
+
+  final insertIndex = _noPubInsertIndex(args, command);
+  if (insertIndex == null) {
+    return args;
+  }
+  return [...args.take(insertIndex), '--no-pub', ...args.skip(insertIndex)];
+}
+
+int? _noPubInsertIndex(List<String> args, String command) {
+  final commandIndex = args.indexOf(command);
+  if (commandIndex == -1) {
+    return null;
+  }
+
+  if (command == 'build') {
+    for (var index = commandIndex + 1; index < args.length; index++) {
+      if (!args[index].startsWith('-')) {
+        return index + 1;
+      }
+    }
+    return null;
+  }
+
+  return commandIndex + 1;
 }
 
 Future<void> _runNativePrepIfNeeded(String command, List<String> args) async {
