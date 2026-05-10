@@ -29,7 +29,7 @@ class AppConstants {
     connectStats: false,
   );
 
-  static const String appName = 'NodeSeek';
+  static const String appName = 'FluxSeek';
   static const String siteName = 'NodeSeek';
   static const String primaryScheme = 'fluxseek';
 

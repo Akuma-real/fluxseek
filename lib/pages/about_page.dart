@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants.dart';
 import '../services/apk_download_service.dart';
 import '../services/cf_challenge_logger.dart';
 import '../services/toast_service.dart';
@@ -233,12 +233,9 @@ class _AboutPageState extends State<AboutPage> {
             child: SizedBox(
               width: 100,
               height: 100,
-              child: ScalableImageWidget.fromSISource(
-                si: ScalableImageSource.fromSvg(
-                  DefaultAssetBundle.of(context),
-                  'assets/nodeseek_logo.svg',
-                  warnF: (_) {},
-                ),
+              child: Image.asset(
+                'assets/images/nodeseek_logo.png',
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -247,7 +244,7 @@ class _AboutPageState extends State<AboutPage> {
             child: Column(
               children: [
                 Text(
-                  'NodeSeek',
+                  AppConstants.appName,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface,
@@ -282,7 +279,7 @@ class _AboutPageState extends State<AboutPage> {
             title: context.l10n.about_openSourceLicense,
             onTap: () => showLicensePage(
               context: context,
-              applicationName: 'NodeSeek',
+              applicationName: AppConstants.appName,
               applicationVersion: _version,
               applicationLegalese: context.l10n.about_legalese,
             ),

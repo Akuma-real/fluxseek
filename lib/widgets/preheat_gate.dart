@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/s.dart';
 import '../pages/about_page.dart';
@@ -248,12 +247,9 @@ class _PreheatLoadingState extends State<_PreheatLoading>
                           child: SizedBox(
                             width: 100,
                             height: 100,
-                            child: ScalableImageWidget.fromSISource(
-                              si: ScalableImageSource.fromSvg(
-                                DefaultAssetBundle.of(context),
-                                'assets/nodeseek_logo.svg',
-                                warnF: (_) {},
-                              ),
+                            child: Image.asset(
+                              'assets/images/nodeseek_logo.png',
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),

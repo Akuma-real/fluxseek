@@ -158,6 +158,7 @@ class _AppImageState extends State<AppImage> {
     return CachedNetworkImage(
       imageUrl: _resolvedUrl!,
       cacheManager: _cacheManager,
+      httpHeaders: contentImageRequestHeaders(_resolvedUrl!),
       width: widget.width,
       height: widget.height,
       fit: widget.fit,

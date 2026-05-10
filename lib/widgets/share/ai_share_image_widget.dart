@@ -1,8 +1,7 @@
 import 'package:ai_model_manager/ai_model_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:jovial_svg/jovial_svg.dart';
 import 'package:markdown/markdown.dart' as md;
+import '../../constants.dart';
 import '../../l10n/s.dart';
 import '../../services/emoji_handler.dart';
 import '../../utils/share_utils.dart';
@@ -120,17 +119,14 @@ class AiShareImageWidget extends StatelessWidget {
         SizedBox(
           width: 28,
           height: 28,
-          child: ScalableImageWidget.fromSISource(
-            si: ScalableImageSource.fromSvg(
-              rootBundle,
-              'assets/nodeseek_logo.svg',
-              warnF: (_) {},
-            ),
+          child: Image.asset(
+            'assets/images/nodeseek_logo.png',
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          'NodeSeek',
+          AppConstants.appName,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import '../../constants.dart';
 import '../../l10n/s.dart';
 import '../../models/topic.dart';
 import '../../utils/share_utils.dart';
@@ -128,17 +127,14 @@ class ShareImageWidget extends ConsumerWidget {
         SizedBox(
           width: 28,
           height: 28,
-          child: ScalableImageWidget.fromSISource(
-            si: ScalableImageSource.fromSvg(
-              rootBundle,
-              'assets/nodeseek_logo.svg',
-              warnF: (_) {},
-            ),
+          child: Image.asset(
+            'assets/images/nodeseek_logo.png',
+            fit: BoxFit.contain,
           ),
         ),
         const SizedBox(width: 8),
         Text(
-          'NodeSeek',
+          AppConstants.appName,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

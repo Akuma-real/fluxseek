@@ -154,6 +154,8 @@ class Topic {
   final DateTime? lastPostedAt;
   final String? lastPosterUsername;
   final String categoryId;
+  final String? categorySlug;
+  final String? categoryName;
   final bool pinned;
   final bool visible;
   final bool closed;
@@ -192,6 +194,8 @@ class Topic {
     this.lastPostedAt,
     this.lastPosterUsername,
     required this.categoryId,
+    this.categorySlug,
+    this.categoryName,
     this.pinned = false,
     this.visible = true,
     this.closed = false,
@@ -229,6 +233,8 @@ class Topic {
       lastPostedAt: TimeUtils.parseUtcTime(json['last_posted_at'] as String?),
       lastPosterUsername: json['last_poster_username'] as String?,
       categoryId: (json['category_id'] ?? 0).toString(),
+      categorySlug: _topicCategorySlug(json),
+      categoryName: _topicCategoryName(json),
       pinned: json['pinned'] as bool? ?? false,
       visible: json['visible'] as bool? ?? true,
       closed: json['closed'] as bool? ?? false,
@@ -264,6 +270,32 @@ class Topic {
       canHaveAnswer: json['can_have_answer'] as bool? ?? false,
     );
   }
+}
+
+String? _topicCategorySlug(Map<String, dynamic> json) {
+  final direct =
+      json['_nodeseek_category_key'] ??
+      json['category_slug'] ??
+      json['category'];
+  final directText = direct?.toString().trim();
+  if (directText != null && directText.isNotEmpty) return directText;
+
+  final link = json['_nodeseek_category_link'] ?? json['categoryLink'];
+  final linkText = link?.toString();
+  if (linkText == null || linkText.isEmpty) return null;
+
+  final match = RegExp(r'/categories/([^/?#]+)').firstMatch(linkText);
+  return match?.group(1);
+}
+
+String? _topicCategoryName(Map<String, dynamic> json) {
+  final direct =
+      json['_nodeseek_category_word'] ??
+      json['category_name'] ??
+      json['categoryWord'] ??
+      json['category_word'];
+  final text = direct?.toString().trim();
+  return text == null || text.isEmpty ? null : text;
 }
 
 /// 链接点击统计
@@ -670,14 +702,8 @@ class Post {
           upvoted == other.upvoted;
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    cooked,
-    likeCount,
-    bookmarked,
-    acceptedAnswer,
-    hidden,
-  );
+  int get hashCode =>
+      Object.hash(id, cooked, likeCount, bookmarked, acceptedAnswer, hidden);
 
   /// 复制并修改部分字段
   Post copyWith({

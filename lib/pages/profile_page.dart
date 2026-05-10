@@ -13,6 +13,7 @@ import 'bookmarks_page.dart';
 import 'my_browser_page.dart';
 import 'my_topics_page.dart';
 import 'user_profile_page.dart';
+import 'web_history_page.dart';
 import 'settings_page.dart';
 import '../widgets/common/loading_spinner.dart';
 import '../widgets/common/loading_dialog.dart';
@@ -590,6 +591,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           MaterialPageRoute(builder: (_) => const BookmarksPage()),
         ),
       ),
+      (
+        icon: Icons.history_rounded,
+        iconColor: Colors.purple,
+        title: context.l10n.profile_browsingHistory,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const WebHistoryPage()),
+        ),
+      ),
     ];
 
     return Card(
@@ -600,7 +610,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             const spacing = 8.0;
-            final columns = constraints.maxWidth < 220 ? 1 : 2;
+            const columns = 3;
             final itemWidth =
                 (constraints.maxWidth - spacing * (columns - 1)) / columns;
 

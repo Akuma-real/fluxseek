@@ -361,6 +361,8 @@ class TopicListNotifier extends AsyncNotifier<List<Topic>> {
     try {
       final service = ref.read(nodeSeekClientProvider);
       final detail = await service.getTopicDetail(topicId);
+      final categoryChanged =
+          detail.categoryId.toString() != existingTopic.categoryId;
 
       final updatedTopic = Topic(
         id: detail.id,
@@ -373,6 +375,8 @@ class TopicListNotifier extends AsyncNotifier<List<Topic>> {
         likeCount: existingTopic.likeCount,
         lastPostedAt: existingTopic.lastPostedAt,
         pinned: existingTopic.pinned,
+        categorySlug: categoryChanged ? null : existingTopic.categorySlug,
+        categoryName: categoryChanged ? null : existingTopic.categoryName,
         tags: detail.tags ?? existingTopic.tags,
         posters: existingTopic.posters,
         unseen: false,
@@ -445,6 +449,8 @@ class TopicListNotifier extends AsyncNotifier<List<Topic>> {
       lastPostedAt: topic.lastPostedAt,
       lastPosterUsername: topic.lastPosterUsername,
       categoryId: topic.categoryId,
+      categorySlug: topic.categorySlug,
+      categoryName: topic.categoryName,
       pinned: topic.pinned,
       visible: topic.visible,
       closed: topic.closed,

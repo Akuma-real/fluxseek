@@ -22,6 +22,7 @@ import '../../utils/responsive.dart';
 import '../../utils/share_utils.dart';
 import '../../providers/preferences_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/web_history_provider.dart';
 import '../reading_settings_page.dart';
 import '../../providers/selected_topic_provider.dart';
 import '../../providers/nodeseek_providers.dart';
@@ -166,6 +167,7 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
   bool _isRouteVisible = true;
   bool _isParentActive = true;
   bool _isScreenTrackRunning = false;
+  int? _lastRecordedHistoryTopicId;
 
   int? get _resolvedViewportPostNumber =>
       _controller.viewportPostNumber ?? widget.scrollToPostNumber;
@@ -240,6 +242,10 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
 
     _controller.scrollController.addListener(_onScroll);
     _pageController = PageController(initialPage: 0);
+
+    if (widget.initialTitle?.isNotEmpty == true) {
+      _recordBrowsingHistory(widget.initialTitle!);
+    }
 
     // 桌面端：注册 J/K 帖子导航 + AI 面板切换
     if (PlatformUtils.isDesktop) {
@@ -569,6 +575,14 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
     if (!previous && canShowDetailPane) {
       _switchToMasterDetail(detail);
     }
+  }
+
+  void _recordBrowsingHistory(String title) {
+    if (_lastRecordedHistoryTopicId == widget.topicId) return;
+    _lastRecordedHistoryTopicId = widget.topicId;
+    ref
+        .read(webHistoryProvider.notifier)
+        .record(ShareUtils.topicUrl(widget.topicId), title);
   }
 
   void _switchToMasterDetail(TopicDetail? detail) {
@@ -1067,6 +1081,10 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
     final detailAsync = ref.watch(topicDetailProvider(params));
     final detail = detailAsync.value;
     final notifier = ref.read(topicDetailProvider(params).notifier);
+
+    if (detail != null) {
+      _recordBrowsingHistory(detail.title);
+    }
 
     _maybeSwitchToMasterDetail(canShowDetailPane, detail);
 
@@ -1599,65 +1617,62 @@ class _TopicDetailPageState extends ConsumerState<TopicDetailPage>
 
     // 使用 ValueListenableBuilder 隔离选中/高亮状态变化
     Widget scrollView = ValueListenableBuilder<int?>(
-          valueListenable: _controller.selectedPostNumberNotifier,
-          builder: (context, selectedPostNumber, _) {
-            return ValueListenableBuilder<int?>(
-              valueListenable: _controller.highlightNotifier,
-              builder: (context, highlightPostNumber, _) {
-                return TopicPostList(
-                  detail: detail,
-                  scrollController: _controller.scrollController,
-                  centerKey: _centerKey,
-                  headerKey: _headerKey,
-                  selectedPostNumber: selectedPostNumber,
-                  highlightPostNumber: highlightPostNumber,
-                  isLoggedIn: isLoggedIn,
-                  hasMoreBefore: notifier.hasMoreBefore,
-                  hasMoreAfter: notifier.hasMoreAfter,
-                  isLoadingPrevious: notifier.isLoadingPrevious,
-                  isLoadingMore: notifier.isLoadingMore,
-                  isLoadMoreFailed: notifier.isLoadMoreFailed,
-                  isLoadPreviousFailed: notifier.isLoadPreviousFailed,
-                  onRetryLoadMore: () => notifier.retryLoadMore(),
-                  onRetryLoadPrevious: () => notifier.retryLoadPrevious(),
-                  centerPostIndex: centerPostIndex,
-                  dividerPostIndex: dividerPostIndex,
-                  onFirstVisiblePostChanged: _updateStreamIndexForPostNumber,
-                  onVisiblePostsChanged: _updateVisiblePosts,
-                  onScrollIndexMappingChanged:
-                      _controller.updateScrollIndexMapping,
-                  onScrollIndexToPostNumberChanged:
-                      _controller.updateScrollIndexToPostNumber,
-                  onPostSegmentRangesChanged:
-                      _controller.updatePostSegmentRanges,
-                  onJumpToPost: _scrollToPost,
-                  onReply: _handleReply,
-                  onEdit: _handleEdit,
-                  onShareAsImage: _sharePostAsImage,
-                  onRefreshPost: _handleRefreshPost,
-                  onNotificationLevelChanged: (level) =>
-                      _handleNotificationLevelChanged(notifier, level),
-                  onSolutionChanged: _handleSolutionChanged,
-                  onQuoteSelection: isLoggedIn ? _handleQuoteSelection : null,
-                  onQuoteImage: isLoggedIn ? _handleImageQuote : null,
-                  onScrollNotification: _controller.handleScrollNotification,
-                  onPointerScroll: _controller.handlePointerScroll,
-                  onFillGapBefore: (postId) => notifier.fillGapBefore(postId),
-                  onFillGapAfter: (postId) => notifier.fillGapAfter(postId),
-                  onExpandHiddenPost: (postId) =>
-                      notifier.expandHiddenPost(postId),
-                  useReplyDialog: notifier.isTopLevelMode,
-                  onShowPostDetail: (post) => showPostRepliesSheet(
-                    context: context,
-                    post: post,
-                    topicId: widget.topicId,
-                    onJumpToPost: _scrollToPost,
-                  ),
-                );
-              },
+      valueListenable: _controller.selectedPostNumberNotifier,
+      builder: (context, selectedPostNumber, _) {
+        return ValueListenableBuilder<int?>(
+          valueListenable: _controller.highlightNotifier,
+          builder: (context, highlightPostNumber, _) {
+            return TopicPostList(
+              detail: detail,
+              scrollController: _controller.scrollController,
+              centerKey: _centerKey,
+              headerKey: _headerKey,
+              selectedPostNumber: selectedPostNumber,
+              highlightPostNumber: highlightPostNumber,
+              isLoggedIn: isLoggedIn,
+              hasMoreBefore: notifier.hasMoreBefore,
+              hasMoreAfter: notifier.hasMoreAfter,
+              isLoadingPrevious: notifier.isLoadingPrevious,
+              isLoadingMore: notifier.isLoadingMore,
+              isLoadMoreFailed: notifier.isLoadMoreFailed,
+              isLoadPreviousFailed: notifier.isLoadPreviousFailed,
+              onRetryLoadMore: () => notifier.retryLoadMore(),
+              onRetryLoadPrevious: () => notifier.retryLoadPrevious(),
+              centerPostIndex: centerPostIndex,
+              dividerPostIndex: dividerPostIndex,
+              onFirstVisiblePostChanged: _updateStreamIndexForPostNumber,
+              onVisiblePostsChanged: _updateVisiblePosts,
+              onScrollIndexMappingChanged: _controller.updateScrollIndexMapping,
+              onScrollIndexToPostNumberChanged:
+                  _controller.updateScrollIndexToPostNumber,
+              onPostSegmentRangesChanged: _controller.updatePostSegmentRanges,
+              onJumpToPost: _scrollToPost,
+              onReply: _handleReply,
+              onEdit: _handleEdit,
+              onShareAsImage: _sharePostAsImage,
+              onRefreshPost: _handleRefreshPost,
+              onNotificationLevelChanged: (level) =>
+                  _handleNotificationLevelChanged(notifier, level),
+              onSolutionChanged: _handleSolutionChanged,
+              onQuoteSelection: isLoggedIn ? _handleQuoteSelection : null,
+              onQuoteImage: isLoggedIn ? _handleImageQuote : null,
+              onScrollNotification: _controller.handleScrollNotification,
+              onPointerScroll: _controller.handlePointerScroll,
+              onFillGapBefore: (postId) => notifier.fillGapBefore(postId),
+              onFillGapAfter: (postId) => notifier.fillGapAfter(postId),
+              onExpandHiddenPost: (postId) => notifier.expandHiddenPost(postId),
+              useReplyDialog: notifier.isTopLevelMode,
+              onShowPostDetail: (post) => showPostRepliesSheet(
+                context: context,
+                post: post,
+                topicId: widget.topicId,
+                onJumpToPost: _scrollToPost,
+              ),
             );
           },
         );
+      },
+    );
 
     scrollView = DesktopRefreshIndicator(
       refreshNotifier: widget.embeddedMode

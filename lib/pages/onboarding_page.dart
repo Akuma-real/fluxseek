@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
 import 'dart:async';
 import 'dart:math' as math;
+import '../constants.dart';
 import '../l10n/s.dart';
 import '../services/deep_link_service.dart';
 import 'webview_login_page.dart';
@@ -159,7 +159,7 @@ class _OnboardingPageState extends State<OnboardingPage>
               fadeAnimation: _fadeAnimations[1],
               slideAnimation: _slideAnimations[1],
               child: Text(
-                'NodeSeek',
+                AppConstants.appName,
                 style: theme.textTheme.displayMedium?.copyWith(
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1.5,
@@ -362,12 +362,9 @@ class _FloatingLogoState extends State<_FloatingLogo>
           SizedBox(
             width: 120,
             height: 120,
-            child: ScalableImageWidget.fromSISource(
-              si: ScalableImageSource.fromSvg(
-                DefaultAssetBundle.of(context),
-                'assets/nodeseek_logo.svg',
-                warnF: (_) {},
-              ),
+            child: Image.asset(
+              'assets/images/nodeseek_logo.png',
+              fit: BoxFit.contain,
             ),
           ),
         ],

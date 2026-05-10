@@ -20,6 +20,14 @@
 - `tool/project_tasks.dart` contains higher-level app and native task orchestration.
 - `tool/project_prep.dart` checks environment, l10n generation, and Android signing state.
 
+## Version Rules
+
+- Do not include manual `pubspec.yaml` version bumps in ordinary feature or fix commits.
+- Keep feature/fix commits on the current checked-in version; the release script owns version changes.
+- Use `just prerelease <target>` for beta releases and `just release <target>` for stable releases.
+- `tool/release.dart` writes `pubspec.yaml` as `<releaseVersion>+<dateBuildCode>`, creates a dedicated `chore: bump version to <releaseVersion>` commit, and tags `v<releaseVersion>`.
+- For example, after landing fixes on `0.1.0-beta.8+2026050923`, run `just prerelease next` to produce the next beta such as `0.1.0-beta.9+YYYYMMDDNN`.
+
 ## Rules
 
 - Prefer focused tests for narrow service/parser fixes, then `just analyze`.

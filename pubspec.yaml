@@ -120,7 +120,6 @@ melos:
 flutter:
   uses-material-design: true
   assets:
-    - assets/nodeseek_logo.svg
     - assets/images/
     - assets/ai_brands/
     - assets/icons/thinking/
@@ -129,7 +128,6 @@ flutter:
     - family: MiSans
       fonts:
         - asset: assets/fonts/MiSans-Regular.ttf
-
 
 
 

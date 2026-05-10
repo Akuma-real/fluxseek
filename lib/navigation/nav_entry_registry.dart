@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/s.dart';
 import '../models/user.dart';
 import '../pages/bookmarks_page.dart';
-import '../pages/browsing_history_page.dart';
 import '../pages/drafts_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/topics_screen.dart';
+import '../pages/web_history_page.dart';
 import '../providers/nodeseek_providers.dart';
 import '../widgets/common/smart_avatar.dart';
 import '../widgets/notification/notification_quick_panel.dart';
@@ -64,7 +64,7 @@ class NavEntryRegistry {
         iconData: Icons.history_rounded,
         selectedIconData: Icons.history_rounded,
         label: (ctx) => ctx.l10n.nav_history,
-        pageBuilder: (ctx, isActive) => BrowsingHistoryPage(isActive: isActive),
+        pageBuilder: (ctx, isActive) => WebHistoryPage(isActive: isActive),
         requiresLogin: true,
       ),
       NavEntry(

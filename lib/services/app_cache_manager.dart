@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import '../constants.dart';
 import 'avif_image_provider.dart';
 export 'avif_image_provider.dart' show AvifImageProvider;
 import 'dio_http_client.dart';
@@ -202,6 +203,15 @@ bool _isAvifUrl(String url) {
   }
 }
 
+/// 内容图片请求头。
+///
+/// 一些第三方图床会拒绝没有 Referer 的直链下载，但允许图片被网页嵌入。
+/// Flutter 图片组件默认像直接下载图片，这里模拟从 NodeSeek 页面加载图片。
+Map<String, String> contentImageRequestHeaders(String url) => {
+  'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+  'Referer': '${AppConstants.baseUrl}/',
+};
+
 /// 创建 内容图片 Provider
 ///
 /// 用于需要 ImageProvider 的场景（CircleAvatar、DecorationImage 等）
@@ -213,7 +223,11 @@ ImageProvider appImageProvider(
   int? maxHeight,
 }) {
   if (_isAvifUrl(url)) {
-    return AvifImageProvider(url, scale: scale);
+    return AvifImageProvider(
+      url,
+      scale: scale,
+      headers: contentImageRequestHeaders(url),
+    );
   }
   return CachedNetworkImageProvider(
     url,
@@ -221,6 +235,7 @@ ImageProvider appImageProvider(
     maxWidth: maxWidth,
     maxHeight: maxHeight,
     cacheManager: AppCacheManager(),
+    headers: contentImageRequestHeaders(url),
   );
 }
 

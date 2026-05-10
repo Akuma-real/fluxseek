@@ -46,8 +46,7 @@ class TopicCard extends ConsumerWidget {
 
     // 获取分类信息
     final categoryMap = ref.watch(categoryMapProvider).value;
-    final categoryId = int.tryParse(topic.categoryId);
-    final category = categoryMap?[categoryId];
+    final category = _resolveTopicCategory(topic, categoryMap);
 
     // 图标逻辑优先级：
     // 1. 本级 FA Icon
@@ -433,8 +432,7 @@ class CompactTopicCard extends ConsumerWidget {
 
     // 获取分类信息
     final categoryMap = ref.watch(categoryMapProvider).value;
-    final categoryId = int.tryParse(topic.categoryId);
-    final category = categoryMap?[categoryId];
+    final category = _resolveTopicCategory(topic, categoryMap);
 
     // 图标逻辑
     IconData? faIcon = FontAwesomeHelper.getIcon(category?.icon);
@@ -635,4 +633,27 @@ class CompactTopicCard extends ConsumerWidget {
     }
     return Colors.grey;
   }
+}
+
+Category? _resolveTopicCategory(Topic topic, Map<int, Category>? categoryMap) {
+  final categoryId = int.tryParse(topic.categoryId);
+  final category = categoryMap?[categoryId];
+  if (category != null) return category;
+
+  final fallbackName = topic.categoryName?.trim();
+  final fallbackSlug = topic.categorySlug?.trim();
+  if ((fallbackName == null || fallbackName.isEmpty) &&
+      (fallbackSlug == null || fallbackSlug.isEmpty)) {
+    return null;
+  }
+
+  return Category(
+    id: categoryId ?? 0,
+    name: fallbackName == null || fallbackName.isEmpty
+        ? fallbackSlug!
+        : fallbackName,
+    color: '64748B',
+    textColor: 'FFFFFF',
+    slug: fallbackSlug ?? '',
+  );
 }

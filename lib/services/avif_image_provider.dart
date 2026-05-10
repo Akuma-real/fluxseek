@@ -26,6 +26,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
   final String url;
   final double scale;
   final BaseCacheManager? cacheManager;
+  final Map<String, String>? headers;
 
   /// 只解码第一帧，不播放动画。用于缩略图网格等场景。
   final bool singleFrame;
@@ -39,6 +40,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     this.url, {
     this.scale = 1.0,
     this.cacheManager,
+    this.headers,
     this.singleFrame = false,
     this.targetSize,
   });
@@ -62,6 +64,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     String url, {
     required int targetSize,
     BaseCacheManager? cacheManager,
+    Map<String, String>? headers,
   }) async {
     if (!isAvifUrl(url)) return;
 
@@ -83,6 +86,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
       url: url,
       targetSize: targetSize,
       thumbKey: thumbKey,
+      headers: headers,
     );
     _pendingThumbnailTasks[thumbKey] = task;
     try {
@@ -129,6 +133,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
       key.url,
       targetSize: key.targetSize!,
       cacheManager: manager,
+      headers: key.headers,
     );
     final warmedBytes = await _readCachedThumbnailBytes(manager, thumbKey);
     if (warmedBytes != null) {
@@ -140,6 +145,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
       manager: manager,
       url: key.url,
       targetSize: key.targetSize!,
+      headers: key.headers,
     );
     unawaited(_cacheThumbnail(manager, thumbKey, displayImage));
 
@@ -172,6 +178,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     required String url,
     required int targetSize,
     required String thumbKey,
+    Map<String, String>? headers,
   }) async {
     ui.Image? displayImage;
     try {
@@ -179,6 +186,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
         manager: manager,
         url: url,
         targetSize: targetSize,
+        headers: headers,
       );
       await _cacheThumbnail(manager, thumbKey, displayImage);
       _knownThumbnailKeys.add(thumbKey);
@@ -191,11 +199,15 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     required BaseCacheManager manager,
     required String url,
     required int targetSize,
+    Map<String, String>? headers,
   }) async {
     await _avifDecodeSemaphore.acquire();
     ui.Image srcImage;
     try {
-      final file = await manager.getSingleFile(url);
+      final file = await manager.getSingleFile(
+        url,
+        headers: headers ?? const {},
+      );
       final bytes = await file.readAsBytes();
       final frames = await decodeAvif(bytes);
       srcImage = frames.first.image;
@@ -262,7 +274,10 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     await _avifDecodeSemaphore.acquire();
     try {
       final manager = key.cacheManager ?? AppCacheManager();
-      final file = await manager.getSingleFile(key.url);
+      final file = await manager.getSingleFile(
+        key.url,
+        headers: key.headers ?? const {},
+      );
       final bytes = await file.readAsBytes();
       final frames = await decodeAvif(bytes);
       if (key.singleFrame && frames.length > 1) {
@@ -283,6 +298,7 @@ class AvifImageProvider extends ImageProvider<AvifImageProvider> {
     return other is AvifImageProvider &&
         other.url == url &&
         other.scale == scale &&
+        mapEquals(other.headers, headers) &&
         other.singleFrame == singleFrame &&
         other.targetSize == targetSize;
   }
