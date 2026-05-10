@@ -22,10 +22,17 @@ Fix the failed GitHub Actions `Build and Release` run for the beta release by al
 
 ## Acceptance Criteria
 
-- [ ] `.github/workflows/build.yaml` uses Flutter `3.41.9`.
-- [ ] Stale docs/spec references to Flutter `3.38.9` are updated or removed.
-- [ ] `just release-check` passes locally.
-- [ ] A new GitHub Actions release run reaches success.
+- [x] `.github/workflows/build.yaml` uses Flutter `3.41.9`.
+- [x] Stale docs/spec references to Flutter `3.38.9` are updated or removed.
+- [x] `just release-check` passes locally.
+- [x] A new GitHub Actions release run reaches success.
+
+## Resolution
+
+- Fixed `.github/workflows/build.yaml` to use Flutter `3.41.9`.
+- Updated stale Flutter SDK references in `README.md` and `.trellis/spec/app/architecture.md`.
+- `just release-check` passed locally.
+- Published `v0.1.0-beta.13`; GitHub Actions run `25626213250` completed successfully and created the prerelease with all three APKs plus SHA256 assets.
 
 ## Out of Scope
 
