@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 9
+- **Total Sessions**: 10
 - **Last Active**: 2026-05-10
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~309 | Active |
+| `journal-1.md` | ~342 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 10 | 2026-05-10 | Fix createReply CSRF error handling | `90a1bc9` | `main` |
 | 9 | 2026-05-10 | Fix history CSRF categories and filters | `681bec4`, `49939e2` | `main` |
 | 8 | 2026-05-10 | Fix beta release action | `75a7d6d`, `93cbe78`, `4dcbf99` | `main` |
 | 7 | 2026-05-10 | Upgrade dependencies to latest | `723af5f`, `f5f169f` | `main` |

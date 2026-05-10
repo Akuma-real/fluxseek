@@ -307,3 +307,36 @@ Fixed local browsing history routing and timestamp display, repaired NodeSeek CS
 ### Next Steps
 
 - None - task complete
+
+
+## Session 10: Fix createReply CSRF error handling
+
+**Date**: 2026-05-10
+**Task**: Fix createReply CSRF error handling
+**Branch**: `main`
+
+### Summary
+
+Wrapped _dio.post('/posts.json') with try/catch _throwApiError to match existing mutation method pattern. Prevents raw DioException from propagating when CSRF retry interceptor fails.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `90a1bc9` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
