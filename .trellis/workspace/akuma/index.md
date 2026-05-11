@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
+- **Total Sessions**: 16
 - **Last Active**: 2026-05-11
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~507 | Active |
+| `journal-1.md` | ~541 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-05-11 | Relocalize Trellis guidance after update | `f13ebaf`, `af81b06` | `main` |
 | 15 | 2026-05-11 | Release beta 0.1.0-beta.16 | `f71c726` | `main` |
 | 14 | 2026-05-11 | Localize Trellis guidance to Chinese | `a831d7c` | `main` |
 | 13 | 2026-05-11 | Add Chinese communication instruction | `2265b4b` | `main` |

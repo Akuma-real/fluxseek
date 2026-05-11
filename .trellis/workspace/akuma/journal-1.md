@@ -505,3 +505,37 @@ Released beta 0.1.0-beta.16 via just prerelease next --yes; pushed main and tag 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 16: Relocalize Trellis guidance after update
+
+**Date**: 2026-05-11
+**Task**: Relocalize Trellis guidance after update
+**Branch**: `main`
+
+### Summary
+
+Updated Trellis runtime files from trellis update, then re-localized current Trellis Markdown guidance and OpenCode prompts to Chinese while preserving runtime and metadata changes.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f13ebaf` | (see git log) |
+| `af81b06` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
