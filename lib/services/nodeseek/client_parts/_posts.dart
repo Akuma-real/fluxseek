@@ -15,13 +15,31 @@ mixin _PostsMixin on _NodeSeekClientBase {
       final response = await _dio.post(
         '/api/content/new-comment',
         data: {'content': raw, 'mode': 'new-comment', 'postId': topicId},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            'Accept': '*/*',
+            'X-Requested-With': null,
+            'Referer': '${AppConstants.baseUrl}/post-$topicId-1',
+            'Origin': AppConstants.baseUrl,
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'csrf-token': _newNodeSeekContentCsrfToken(),
+          },
+          extra: {'skipCsrf': true, 'skipWebViewAdapter': true},
+        ),
       );
       final respData = response.data;
       if (respData is Map && respData['success'] == false) {
-        throw Exception(respData['message']?.toString() ?? S.current.error_replyFailed);
+        throw Exception(
+          respData['message']?.toString() ?? S.current.error_replyFailed,
+        );
       }
 
-      final hash = respData is Map ? respData['redirectHash']?.toString() : null;
+      final hash = respData is Map
+          ? respData['redirectHash']?.toString()
+          : null;
       final postNumber = hash == null
           ? null
           : int.tryParse(hash.replaceFirst('#', ''));
@@ -85,6 +103,19 @@ mixin _PostsMixin on _NodeSeekClientBase {
     } on DioException catch (e) {
       _throwApiError(e);
     }
+  }
+
+  String _newNodeSeekContentCsrfToken() {
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    final random = Random.secure();
+    return String.fromCharCodes(
+      List<int>.generate(
+        16,
+        (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+        growable: false,
+      ),
+    );
   }
 
   /// 点赞帖子
@@ -260,9 +291,7 @@ mixin _PostsMixin on _NodeSeekClientBase {
         };
       }
       final response = await _dio.post(
-        isTopic
-            ? '/api/content/edit-discussion'
-            : '/api/content/edit-comment',
+        isTopic ? '/api/content/edit-discussion' : '/api/content/edit-comment',
         data: payload,
       );
       final respData = response.data;
@@ -632,5 +661,4 @@ mixin _PostsMixin on _NodeSeekClientBase {
           return Response(requestOptions: RequestOptions());
         });
   }
-
 }
