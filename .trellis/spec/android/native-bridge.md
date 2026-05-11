@@ -1,8 +1,8 @@
 # Native Bridge
 
-## MethodChannel Rules
+## MethodChannel 规则
 
-Channel names are stable app contracts. Existing examples:
+Channel names 是稳定的 app 契约。现有示例：
 
 - `com.akuma.fluxseek/browser`
 - `com.akuma.fluxseek/crashlytics`
@@ -11,24 +11,24 @@ Channel names are stable app contracts. Existing examples:
 - `com.akuma.fluxseek/android_cdp`
 - `com.akuma.fluxseek/webauthn`
 
-When adding or changing a channel:
+新增或修改 channel 时：
 
-- Keep Android method names and Dart caller names in sync.
-- Return structured error details with `result.error(...)` for recoverable failures.
-- Move blocking IO or socket work off the UI thread; existing CDP methods use `ioExecutor`.
-- Avoid leaking cookie/token values into logs or error payloads.
+- 保持 Android method names 和 Dart caller names 同步。
+- 对可恢复失败，用 `result.error(...)` 返回结构化 error details。
+- 将阻塞 IO 或 socket 工作移出 UI thread；现有 CDP methods 使用 `ioExecutor`。
+- 避免在 logs 或 error payloads 中泄露 cookie/token 值。
 
 ## CDP Bridge
 
-`AndroidCdpBridge` talks to local WebView DevTools sockets for cookie operations. It has explicit retry behavior for target discovery and retryable WebSocket disconnects.
+`AndroidCdpBridge` 与本地 WebView DevTools sockets 通信以执行 cookie 操作。它对 target discovery 和可重试 WebSocket disconnects 有明确 retry 行为。
 
-Rules:
+规则：
 
-- Keep target selection conservative. `getCookies` must match requested URLs; write/delete operations require a page target.
-- Preserve retry limits and timeout behavior unless tests or device evidence justify a change.
-- Log operation metadata and counts, not secret cookie values.
+- 保持 target selection 保守。`getCookies` 必须匹配 requested URLs；write/delete 操作需要 page target。
+- 除非 tests 或设备证据证明需要变更，否则保留 retry limits 和 timeout behavior。
+- 记录 operation metadata 和 counts，不记录 secret cookie values。
 
-## Examples
+## 示例
 
 - `android/app/src/main/kotlin/com/akuma/fluxseek/MainActivity.kt`
 - `android/app/src/main/kotlin/com/akuma/fluxseek/AndroidCdpBridge.kt`

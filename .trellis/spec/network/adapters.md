@@ -1,8 +1,8 @@
-# Network Adapters
+# 网络 Adapters
 
 ## Dio Factory
 
-`NodeSeekDio.create()` is the unified Dio construction point. It configures, in order:
+`NodeSeekDio.create()` 是统一的 Dio 构造点。它按顺序配置：
 
 1. platform adapter
 2. session guard
@@ -16,17 +16,17 @@
 10. Cloudflare challenge
 11. network logging
 
-Do not create a separate Dio stack for NodeSeek unless there is a clear reason and the interceptor contract is copied deliberately.
+除非有明确原因并且有意复制 interceptor 契约，否则不要为 NodeSeek 创建独立 Dio stack。
 
-## Adapter Rules
+## Adapter 规则
 
-- Platform selection lives in `lib/services/network/adapters/platform_adapter.dart`.
-- Android normally uses native/Cronet-capable adapter behavior; WebView is a targeted fallback path, not the default for every request.
-- Gateway URL rewriting happens inside `_GatewayAdapterWrapper` at transport time so interceptors continue seeing original NodeSeek URLs.
-- Request-level flags such as `forceWebViewAdapter`, `skipWebViewAdapter`, `skipCfChallenge`, `skipCsrf`, and `isSilent` are part of the network contract. Search existing usage before adding or changing them.
+- 平台选择位于 `lib/services/network/adapters/platform_adapter.dart`。
+- Android 通常使用 native/Cronet-capable adapter 行为；WebView 是定向 fallback 路径，不是每个请求的默认路径。
+- Gateway URL 重写在传输时发生于 `_GatewayAdapterWrapper` 内，因此 interceptors 仍然看到原始 NodeSeek URLs。
+- `forceWebViewAdapter`、`skipWebViewAdapter`、`skipCfChallenge`、`skipCsrf` 和 `isSilent` 等请求级 flags 属于网络契约。新增或修改前先搜索现有用法。
 
-## Verification
+## 验证
 
-- Adapter behavior should have focused tests under `test/services/network/adapters/`.
-- Cookie/interceptor changes should also run related cookie tests under `test/services/network/cookie/`.
-- Use `just analyze` after touching adapter code because type errors often cross service boundaries.
+- Adapter 行为应在 `test/services/network/adapters/` 下有聚焦测试。
+- Cookie/interceptor 变更还应运行 `test/services/network/cookie/` 下的相关 cookie 测试。
+- 触及 adapter 代码后使用 `just analyze`，因为类型错误经常跨越 service 边界。

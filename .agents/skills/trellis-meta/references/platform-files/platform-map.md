@@ -1,10 +1,10 @@
-# Platform File Map
+# 平台文件映射
 
-This page lists common Trellis file locations in a user project by platform. Whether a platform directory exists in an actual project depends on which `trellis init --<platform>` commands the user ran.
+本页按平台列出用户项目中常见 Trellis 文件位置。实际项目中是否存在某个平台目录，取决于用户运行过哪些 `trellis init --<platform>` 命令。
 
-## Matrix
+## 矩阵
 
-| Platform | CLI flag | Main directory | Skill directory | Agent directory | Hooks/extensions |
+| 平台 | CLI flag | 主目录 | Skill 目录 | Agent 目录 | Hooks/extensions |
 | --- | --- | --- | --- | --- | --- |
 | Claude Code | `--claude` | `.claude/` | `.claude/skills/` | `.claude/agents/` | `.claude/hooks/` + `.claude/settings.json` |
 | Cursor | `--cursor` | `.cursor/` | `.cursor/skills/` | `.cursor/agents/` | `.cursor/hooks.json` + `.cursor/hooks/` |
@@ -21,11 +21,11 @@ This page lists common Trellis file locations in a user project by platform. Whe
 | Factory Droid | `--droid` | `.factory/` | `.factory/skills/` | `.factory/droids/` | `.factory/hooks/` + settings |
 | Pi Agent | `--pi` | `.pi/` | `.pi/skills/` | `.pi/agents/` | `.pi/extensions/trellis/` + `.pi/settings.json` |
 
-## Capability Groups
+## 能力分组
 
-### Trellis Sub-Agent Support
+### Trellis Sub-Agent 支持
 
-These platforms usually have `trellis-research`, `trellis-implement`, and `trellis-check` files:
+这些平台通常有 `trellis-research`、`trellis-implement` 和 `trellis-check` 文件：
 
 - Claude Code
 - Cursor
@@ -39,36 +39,36 @@ These platforms usually have `trellis-research`, `trellis-implement`, and `trell
 - Factory Droid
 - Pi Agent
 
-When changing implementation/check/research behavior, look for the corresponding platform agent files first.
+修改 implementation/check/research 行为时，先查找对应平台 agent files。
 
-### Main-Session Workflow Platforms
+### Main-Session Workflow 平台
 
-These platforms rely more on workflows/skills to guide the main session:
+这些平台更依赖 workflows/skills 来引导 main session：
 
 - Kilo
 - Antigravity
 - Windsurf
 
-When changing behavior, inspect workflows and skills first. Do not assume Trellis sub-agents exist.
+修改行为时，先检查 workflows 和 skills。不要假设 Trellis sub-agents 存在。
 
-### Shared `.agents/skills/`
+### 共享 `.agents/skills/`
 
-Codex writes the shared `.agents/skills/` layer. Some tools that support agentskills.io can also read this directory. If the user wants multiple compatible tools to share one skill, consider `.agents/skills/` first, but do not assume every platform reads it.
+Codex 写入共享 `.agents/skills/` layer。一些支持 agentskills.io 的工具也能读取此目录。如果用户希望多个兼容工具共享一个 skill，优先考虑 `.agents/skills/`，但不要假设每个平台都会读取它。
 
-## Decision Rules When Modifying Platform Files
+## 修改平台文件时的决策规则
 
-1. User specified a platform: modify only that platform directory unless shared workflow/spec files must also change.
-2. User says "all platforms should do this": synchronize equivalent entry points platform by platform; do not modify only one directory.
-3. User only says "my AI": inspect the configuration directories that actually exist in the project and infer the current AI platform.
-4. User wants project rules: prefer `.trellis/spec/` or a project-local skill.
-5. User wants Trellis behavior: edit `.trellis/workflow.md` plus platform hooks/agents/skills/commands.
+1. 用户指定平台：只修改该平台目录，除非 shared workflow/spec files 也必须改变。
+2. 用户说“所有平台都应这样”：逐平台同步等价入口点；不要只修改一个目录。
+3. 用户只说“我的 AI”：检查项目中实际存在的配置目录，推断当前 AI 平台。
+4. 用户想要项目规则：优先使用 `.trellis/spec/` 或 project-local skill。
+5. 用户想要 Trellis 行为：编辑 `.trellis/workflow.md` 以及平台 hooks/agents/skills/commands。
 
-## When Paths Differ
+## 当路径不一致时
 
-Platform ecosystems change, and user projects may already be customized. If this table disagrees with local files, use the actual settings/config in the user project as authoritative:
+平台生态会变化，用户项目也可能已自定义。如果此表与本地文件不一致，以用户项目中的实际 settings/config 为权威：
 
-- Check the hook that settings registers.
-- Check the script that a command/prompt/workflow points to.
-- Judge behavior by the read rules currently written in the agent file.
+- 检查 settings 注册的 hook。
+- 检查 command/prompt/workflow 指向的 script。
+- 根据 agent file 当前写明的读取规则判断行为。
 
-Do not delete a custom file just because it is not listed in this path table.
+不要只因为某个自定义文件未列在此路径表中就删除它。

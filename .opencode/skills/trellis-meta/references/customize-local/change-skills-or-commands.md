@@ -1,26 +1,26 @@
-# Change Local Skills, Commands, Prompts, And Workflows
+# 修改本地 Skills、Commands、Prompts 与 Workflows
 
-When the user wants to change AI entry points, auto-trigger rules, or explicit command behavior, edit skills, commands, prompts, or workflows in local platform directories.
+当用户想修改 AI entry points、auto-trigger rules 或显式 command 行为时，编辑本地平台目录中的 skills、commands、prompts 或 workflows。
 
-## Read These Files First
+## 先读这些文件
 
 1. `.trellis/workflow.md`
-2. Target platform skill/command/prompt/workflow directory
-3. Related agent or hook files
-4. Whether project rules already exist in `.trellis/spec/`
+2. 目标平台 skill/command/prompt/workflow 目录
+3. 相关 agent 或 hook files
+4. 项目规则是否已存在于 `.trellis/spec/`
 
-## Which Entry Type To Choose
+## 选择哪种入口类型
 
-| Goal | Recommendation |
+| 目标 | 建议 |
 | --- | --- |
-| AI should automatically know a capability | Add or modify a skill. |
-| User wants to trigger manually with a command | Add or modify a command/prompt/workflow. |
-| Team project conventions | Prefer `.trellis/spec/` or a project-local skill. |
-| Change Trellis flow semantics | Synchronize `.trellis/workflow.md`. |
+| AI 应自动知道某能力 | 添加或修改 skill。 |
+| 用户想用 command 手动触发 | 添加或修改 command/prompt/workflow。 |
+| 团队项目 conventions | 优先使用 `.trellis/spec/` 或 project-local skill。 |
+| 修改 Trellis flow 语义 | 同步 `.trellis/workflow.md`。 |
 
-## Modify A Skill
+## 修改 Skill
 
-A skill is usually:
+Skill 通常是：
 
 ```text
 <skill-name>/
@@ -28,30 +28,30 @@ A skill is usually:
 └── references/
 ```
 
-`SKILL.md` should be short and responsible for triggering/routing. Put long content in `references/` so AI can read it on demand.
+`SKILL.md` 应保持简短，负责 triggering/routing。将长内容放在 `references/`，供 AI 按需读取。
 
-The frontmatter description should specify when to use the skill. Example:
+frontmatter description 应指定何时使用该 skill。示例：
 
 ```yaml
-description: "Use when customizing this project's deployment workflow and release checklist."
+description: "自定义本项目 deployment workflow 和 release checklist 时使用。"
 ```
 
-Do not write vague descriptions such as "helpful project skill"; they can trigger incorrectly.
+不要写“helpful project skill”等模糊描述；它们可能误触发。
 
-## Modify A Command/Prompt/Workflow
+## 修改 Command/Prompt/Workflow
 
-Explicit entry points should state:
+显式入口点应说明：
 
-- How the user triggers it.
-- Which `.trellis/` files to read.
-- Which scripts to run.
-- How to report after completion.
+- 用户如何触发它。
+- 要读取哪些 `.trellis/` 文件。
+- 要运行哪些 scripts。
+- 完成后如何报告。
 
-If a command only repeats workflow rules, prefer making it reference/read `.trellis/workflow.md` instead of maintaining a second copy of the flow.
+如果 command 只是重复 workflow rules，优先让它引用/读取 `.trellis/workflow.md`，而不是维护第二份 flow 副本。
 
-## Common Paths
+## 常见路径
 
-| Platform | Entry directories |
+| 平台 | 入口目录 |
 | --- | --- |
 | Claude Code | `.claude/skills/`, `.claude/commands/` |
 | Cursor | `.cursor/skills/`, `.cursor/commands/` |
@@ -60,19 +60,19 @@ If a command only repeats workflow rules, prefer making it reference/read `.trel
 | GitHub Copilot | `.github/skills/`, `.github/prompts/` |
 | Kilo / Antigravity / Windsurf | workflows + skills |
 
-## Add A Project-Local Skill
+## 添加 Project-Local Skill
 
-If the user wants to document team-private customizations, create a project-local skill, for example:
+如果用户想记录团队私有 customizations，创建 project-local skill，例如：
 
 ```text
 .claude/skills/project-trellis-local/
 └── SKILL.md
 ```
 
-For multi-platform projects, add equivalent versions in each platform skill directory, or use `.agents/skills/` on platforms that support the shared layer.
+对于多平台项目，在每个平台 skill directory 中添加等价版本，或在支持 shared layer 的平台上使用 `.agents/skills/`。
 
-## Notes
+## 说明
 
-- Do not mix every platform's syntax into one file.
-- Do not change only one platform entry point while claiming all platforms are supported.
-- Do not hide long-term engineering conventions inside a command; write them to `.trellis/spec/`.
+- 不要把每个平台的语法混进一个文件。
+- 不要只修改一个平台入口点却声称支持所有平台。
+- 不要把长期工程 conventions 藏在 command 中；写入 `.trellis/spec/`。

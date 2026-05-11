@@ -1,59 +1,59 @@
-# Platform Files Overview
+# 平台文件概览
 
-Trellis connects the same local architecture to different AI tools. `.trellis/` stores the shared runtime; platform directories store adapter files that define how each AI tool enters Trellis.
+Trellis 将同一本地架构连接到不同 AI tools。`.trellis/` 存储共享 runtime；平台目录存储 adapter files，用来定义每个 AI tool 如何进入 Trellis。
 
-When a local AI modifies Trellis, it should distinguish two file categories first:
+当本地 AI 修改 Trellis 时，应先区分两类文件：
 
-- **Shared files**: `.trellis/workflow.md`, `.trellis/tasks/`, `.trellis/spec/`, `.trellis/scripts/`.
-- **Platform files**: `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kiro/`, `.gemini/`, `.qoder/`, `.codebuddy/`, `.github/`, `.factory/`, `.pi/`, `.kilocode/`, `.agent/`, `.windsurf/`, and similar directories.
+- **共享文件**：`.trellis/workflow.md`、`.trellis/tasks/`、`.trellis/spec/`、`.trellis/scripts/`。
+- **平台文件**：`.claude/`、`.codex/`、`.cursor/`、`.opencode/`、`.kiro/`、`.gemini/`、`.qoder/`、`.codebuddy/`、`.github/`、`.factory/`、`.pi/`、`.kilocode/`、`.agent/`、`.windsurf/` 以及类似目录。
 
-Platform files do not store business state. They let the corresponding AI tool read Trellis state, call Trellis scripts, and load Trellis skills/agents/hooks.
+平台文件不存储业务状态。它们让对应 AI tool 读取 Trellis state、调用 Trellis scripts，并加载 Trellis skills/agents/hooks。
 
-## Platform File Categories
+## 平台文件类别
 
-| Category | Common paths | Purpose |
+| 类别 | 常见路径 | 用途 |
 | --- | --- | --- |
-| settings/config | `.claude/settings.json`, `.codex/hooks.json`, `.qoder/settings.json` | Register hooks, plugins, extensions, or platform behavior. |
-| hooks/plugins/extensions | `.claude/hooks/`, `.opencode/plugins/`, `.pi/extensions/` | Inject context at session start, user input, agent startup, shell execution, and similar events. |
-| agents | `.claude/agents/`, `.codex/agents/`, `.kiro/agents/` | Define `trellis-research`, `trellis-implement`, and `trellis-check`. |
-| skills | `.claude/skills/`, `.agents/skills/`, `.qoder/skills/` | Capability descriptions that auto-trigger or can be read on demand. |
-| commands/prompts/workflows | `.cursor/commands/`, `.github/prompts/`, `.windsurf/workflows/` | Entry points explicitly invoked by the user. |
+| settings/config | `.claude/settings.json`, `.codex/hooks.json`, `.qoder/settings.json` | 注册 hooks、plugins、extensions 或平台行为。 |
+| hooks/plugins/extensions | `.claude/hooks/`, `.opencode/plugins/`, `.pi/extensions/` | 在 session start、user input、agent startup、shell execution 等事件注入 context。 |
+| agents | `.claude/agents/`, `.codex/agents/`, `.kiro/agents/` | 定义 `trellis-research`、`trellis-implement` 和 `trellis-check`。 |
+| skills | `.claude/skills/`, `.agents/skills/`, `.qoder/skills/` | 可自动触发或按需读取的能力描述。 |
+| commands/prompts/workflows | `.cursor/commands/`, `.github/prompts/`, `.windsurf/workflows/` | 用户显式调用的入口点。 |
 
-## Three Platform Integration Modes
+## 三种平台集成模式
 
-### 1. Hook / Extension Driven
+### 1. Hook / Extension 驱动
 
-These platforms can trigger scripts or plugins on specific events and actively inject Trellis context into AI.
+这些平台可以在特定事件触发 scripts 或 plugins，并主动向 AI 注入 Trellis context。
 
-Common capabilities:
+常见能力：
 
-- session-start injection of a `.trellis/` overview.
-- workflow-state hints for each user turn.
-- PRD/spec/research injection when sub-agents start.
-- Shell commands inheriting session identity.
+- `.trellis/` overview 的 session-start injection。
+- 每个用户回合的 workflow-state hints。
+- sub-agents 启动时注入 PRD/spec/research。
+- Shell commands 继承 session identity。
 
-To change "when the AI knows what," inspect hooks/plugins/extensions and settings first.
+要改变“AI 何时知道什么”，先检查 hooks/plugins/extensions 和 settings。
 
 ### 2. Agent Prelude / Pull-Based
 
-Some platforms cannot reliably let hooks rewrite sub-agent prompts, so the agent file itself instructs the agent to read the active task, PRD, and JSONL context after startup.
+有些平台无法可靠地让 hooks 重写 sub-agent prompts，因此 agent file 本身会指示 agent 启动后读取 active task、PRD 和 JSONL context。
 
-To change how sub-agents load context, inspect the agent files themselves.
+要改变 sub-agents 如何加载 context，检查 agent files 本身。
 
 ### 3. Main-Session Workflow
 
-Some platforms do not have Trellis sub-agent or hook capabilities. They rely on workflows/skills/commands to guide the main-session AI to read files, run scripts, and move tasks forward.
+有些平台没有 Trellis sub-agent 或 hook 能力。它们依赖 workflows/skills/commands 引导 main-session AI 读取文件、运行 scripts 并推进 tasks。
 
-To change behavior, inspect platform workflows/skills/commands and `.trellis/workflow.md`.
+要改变行为，检查平台 workflows/skills/commands 和 `.trellis/workflow.md`。
 
-## Local Modification Order
+## 本地修改顺序
 
-When the user asks to customize behavior for a platform, the AI should inspect files in this order:
+当用户要求自定义某个平台的行为时，AI 应按此顺序检查文件：
 
-1. Read `.trellis/workflow.md` to confirm the shared flow.
-2. Read the target platform's settings/config to see which hooks/agents/skills/commands are registered.
-3. Read the target platform's agents/skills/commands/hooks.
-4. Modify the local file closest to the user's need.
-5. If the change affects the shared flow, synchronize `.trellis/workflow.md` or `.trellis/spec/`.
+1. 读取 `.trellis/workflow.md` 确认共享 flow。
+2. 读取目标平台 settings/config，查看注册了哪些 hooks/agents/skills/commands。
+3. 读取目标平台 agents/skills/commands/hooks。
+4. 修改最接近用户需求的本地文件。
+5. 如果变更影响共享 flow，同步 `.trellis/workflow.md` 或 `.trellis/spec/`。
 
-Do not modify only platform files and forget the shared workflow. Do not modify only `.trellis/workflow.md` and forget that platform entry points may still contain old descriptions.
+不要只修改平台文件而忘记共享 workflow。也不要只修改 `.trellis/workflow.md` 而忘记平台入口点可能仍包含旧描述。

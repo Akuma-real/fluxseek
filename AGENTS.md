@@ -1,25 +1,25 @@
 <!-- TRELLIS:START -->
-# Trellis Instructions
+# Trellis 指令
 
-These instructions are for AI assistants working in this project.
+这些指令适用于在本项目中工作的 AI 助手。
 
-This project is managed by Trellis. The working knowledge you need lives under `.trellis/`:
+本项目由 Trellis 管理。你需要的工作知识位于 `.trellis/`：
 
-- `.trellis/workflow.md` — development phases, when to create tasks, skill routing
-- `.trellis/spec/` — package- and layer-scoped coding guidelines (read before writing code in a given layer)
-- `.trellis/workspace/` — per-developer journals and session traces
-- `.trellis/tasks/` — active and archived tasks (PRDs, research, jsonl context)
+- `.trellis/workflow.md` — 开发阶段、何时创建任务、技能路由
+- `.trellis/spec/` — 按 package 和 layer 组织的编码指南（在某个 layer 写代码前先读）
+- `.trellis/workspace/` — 每位开发者的日志和会话轨迹
+- `.trellis/tasks/` — 活跃和归档任务（PRD、研究、jsonl 上下文）
 
-If a Trellis command is available on your platform (e.g. `/trellis:finish-work`, `/trellis:continue`), prefer it over manual steps. Not every platform exposes every command.
+如果当前平台提供 Trellis 命令（例如 `/trellis:finish-work`、`/trellis:continue`），优先使用命令而不是手动步骤。并非每个平台都会暴露所有命令。
 
-If you're using Codex or another agent-capable tool, additional project-scoped helpers may live in:
-- `.agents/skills/` — reusable Trellis skills
-- `.codex/agents/` — optional custom subagents
+如果你使用 Codex 或其他支持 agent 的工具，额外的项目级辅助文件可能位于：
+- `.agents/skills/` — 可复用的 Trellis skills
+- `.codex/agents/` — 可选的自定义 subagents
 
-Managed by Trellis. Edits outside this block are preserved; edits inside may be overwritten by a future `trellis update`.
+由 Trellis 管理。本区块外的编辑会保留；本区块内的编辑可能在未来 `trellis update` 时被覆盖。
 
 <!-- TRELLIS:END -->
 
-## Communication
+## 沟通
 
-Communicate with users in Chinese.
+与用户沟通时使用中文。

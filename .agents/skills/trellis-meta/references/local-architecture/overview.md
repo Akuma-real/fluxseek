@@ -1,51 +1,51 @@
-# Local Trellis Architecture Overview
+# 本地 Trellis 架构概览
 
-`trellis-meta` is for user projects that have already run `trellis init`. The user's machine usually has only the npm-installed `trellis` command plus the Trellis files generated inside the project; it may not have the Trellis CLI source code.
+`trellis-meta` 面向已经运行 `trellis init` 的用户项目。用户机器通常只有通过 npm 安装的 `trellis` 命令，以及项目内生成的 Trellis 文件；不一定有 Trellis CLI source code。
 
-Therefore, when an AI uses this skill, the default customization target is local files inside the user project:
+因此，当 AI 使用此 skill 时，默认自定义目标是用户项目内的本地文件：
 
-- `.trellis/`: workflow, tasks, specs, memory, scripts, and runtime state.
-- Platform directories: `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.kiro/`, `.gemini/`, `.qoder/`, `.codebuddy/`, `.github/`, `.factory/`, `.pi/`, `.kilocode/`, `.agent/`, `.windsurf/`, and similar directories.
-- Shared skill layer: `.agents/skills/`.
+- `.trellis/`：workflow、tasks、specs、memory、scripts 和 runtime state。
+- 平台目录：`.claude/`、`.codex/`、`.cursor/`、`.opencode/`、`.kiro/`、`.gemini/`、`.qoder/`、`.codebuddy/`、`.github/`、`.factory/`、`.pi/`、`.kilocode/`、`.agent/`、`.windsurf/` 以及类似目录。
+- 共享 skill layer：`.agents/skills/`。
 
-Do not default to guiding the user to fork the Trellis CLI repository. Treat upstream source code as the operating target only when the user explicitly says they want to change Trellis upstream source, publish an npm package, or contribute a PR.
+不要默认引导用户 fork Trellis CLI repository。只有当用户明确表示想修改 Trellis upstream source、发布 npm package 或贡献 PR 时，才把 upstream source code 作为操作目标。
 
-## Local System Model
+## 本地系统模型
 
-Trellis provides three layers inside a user project:
+Trellis 在用户项目中提供三层：
 
-1. **Workflow layer**: `.trellis/workflow.md` defines phases, routing, next actions, and prompt blocks.
-2. **Persistence layer**: `.trellis/tasks/`, `.trellis/spec/`, and `.trellis/workspace/` store tasks, specs, and session memory.
-3. **Platform integration layer**: hooks, settings, agents, skills, commands, prompts, and workflows in platform directories connect the Trellis workflow to different AI tools.
+1. **Workflow layer**：`.trellis/workflow.md` 定义 phases、routing、next actions 和 prompt blocks。
+2. **Persistence layer**：`.trellis/tasks/`、`.trellis/spec/` 和 `.trellis/workspace/` 存储 tasks、specs 和 session memory。
+3. **Platform integration layer**：平台目录中的 hooks、settings、agents、skills、commands、prompts 和 workflows 将 Trellis workflow 连接到不同 AI tools。
 
-All three layers live inside the user project, so an AI can read and modify them directly.
+三层都位于用户项目内，因此 AI 可以直接读取和修改它们。
 
-## Core Paths
+## 核心路径
 
-| Path | Purpose |
+| 路径 | 用途 |
 | --- | --- |
-| `.trellis/workflow.md` | Workflow phases, skill routing, and workflow-state prompt blocks. |
-| `.trellis/config.yaml` | Project configuration, task lifecycle hooks, monorepo package configuration, and journal configuration. |
-| `.trellis/spec/` | The user's project-specific coding conventions and thinking guides. |
-| `.trellis/tasks/` | Each task's PRD, technical notes, research files, and JSONL context. |
-| `.trellis/workspace/` | Per-developer journals and cross-session memory. |
-| `.trellis/scripts/` | Local Python runtime used by commands, hooks, and context injection. |
-| `.trellis/.runtime/` | Session-level runtime state, such as the current task pointer. |
-| `.trellis/.template-hashes.json` | Template hashes for Trellis-managed files, used by update to determine whether local files were modified by the user. |
+| `.trellis/workflow.md` | Workflow phases、skill routing 和 workflow-state prompt blocks。 |
+| `.trellis/config.yaml` | Project configuration、task lifecycle hooks、monorepo package configuration 和 journal configuration。 |
+| `.trellis/spec/` | 用户项目特定编码约定和 thinking guides。 |
+| `.trellis/tasks/` | 每个 task 的 PRD、technical notes、research files 和 JSONL context。 |
+| `.trellis/workspace/` | Per-developer journals 和 cross-session memory。 |
+| `.trellis/scripts/` | commands、hooks 和 context injection 使用的本地 Python runtime。 |
+| `.trellis/.runtime/` | Session-level runtime state，例如 current task pointer。 |
+| `.trellis/.template-hashes.json` | Trellis-managed files 的 template hashes，update 用它判断本地文件是否已被用户修改。 |
 
-## AI Customization Principles
+## AI 自定义原则
 
-1. **Find the local source of truth first**: Do not edit from memory. Read `.trellis/workflow.md`, `.trellis/config.yaml`, the relevant platform directory, and related task files first.
-2. **Edit the user project, not the npm package cache**: Modify generated files inside the project, not `node_modules` or the global npm install directory.
-3. **Keep platform files aligned with `.trellis/`**: If workflow routing changes, also check whether platform skills or commands still describe the same flow.
-4. **Put project-specific rules in `.trellis/spec/` or a local skill**: Do not put team conventions into `trellis-meta`.
-5. **Preserve user changes**: If a file was already modified locally, work from the current content instead of overwriting it with a default template.
+1. **先找到本地事实来源**：不要凭记忆编辑。先读取 `.trellis/workflow.md`、`.trellis/config.yaml`、相关平台目录和相关 task files。
+2. **编辑用户项目，而不是 npm package cache**：修改项目内生成的文件，不修改 `node_modules` 或全局 npm install 目录。
+3. **保持平台文件与 `.trellis/` 对齐**：如果 workflow routing 变化，也检查平台 skills 或 commands 是否仍描述同一 flow。
+4. **将项目特定规则放在 `.trellis/spec/` 或 local skill**：不要把团队 conventions 放入 `trellis-meta`。
+5. **保留用户变更**：如果文件已经被本地修改，从当前内容继续工作，而不是用默认 template 覆盖。
 
-## How To Use This Directory
+## 如何使用本目录
 
-- To understand which files exist after init, read `generated-files.md`.
-- To change phases, routing, or next actions, read `workflow.md`.
-- To change the task model, JSONL context, or active task behavior, read `task-system.md`.
-- To change coding convention injection, read `spec-system.md`.
-- To understand journals and cross-session memory, read `workspace-memory.md`.
-- To change hooks or sub-agent context loading, read `context-injection.md`.
+- 要了解 init 后有哪些文件，读取 `generated-files.md`。
+- 要修改 phases、routing 或 next actions，读取 `workflow.md`。
+- 要修改 task model、JSONL context 或 active task behavior，读取 `task-system.md`。
+- 要修改 coding convention injection，读取 `spec-system.md`。
+- 要理解 journals 和 cross-session memory，读取 `workspace-memory.md`。
+- 要修改 hooks 或 sub-agent context loading，读取 `context-injection.md`。

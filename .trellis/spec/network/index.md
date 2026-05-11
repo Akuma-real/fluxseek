@@ -1,8 +1,8 @@
-# Network And NodeSeek Guidelines
+# Network 与 NodeSeek 指南
 
 > 网络层是 fluxseek 的核心风险区，涉及 NodeSeek SSR/API 逆向、Cookie、Cloudflare challenge、WebView fallback 和平台 HTTP adapter。
 
-## Pre-Development Checklist
+## 开发前检查清单
 
 - 改 NodeSeek API、SSR 解析或用户/话题/通知数据时读 [nodeseek.md](./nodeseek.md)。
 - 改 Dio、adapter、proxy、gateway、request scheduler 时读 [adapters.md](./adapters.md)。
@@ -11,13 +11,13 @@
 - 涉及 UI 状态或 provider 时同时读 `.trellis/spec/app/index.md`。
 - 总是读 `.trellis/spec/guides/index.md`。
 
-## Key Paths
+## 关键路径
 
-| Area | Path |
+| 区域 | 路径 |
 | --- | --- |
 | Dio factory | `lib/services/network/node_seek_dio.dart` |
-| Network adapters | `lib/services/network/adapters/` |
+| 网络 adapters | `lib/services/network/adapters/` |
 | Interceptors | `lib/services/network/interceptors/` |
 | Cookie services | `lib/services/network/cookie/` |
 | NodeSeek service | `lib/services/nodeseek/` |
-| Cookie architecture doc | `docs/cookie-sync-status.md` |
+| Cookie 架构文档 | `docs/cookie-sync-status.md` |

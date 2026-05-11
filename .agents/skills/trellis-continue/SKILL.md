@@ -1,60 +1,60 @@
 ---
 name: trellis-continue
-description: "Resume work on the current task. Loads the workflow Phase Index, figures out which phase/step to pick up at, then pulls the step-level detail via get_context.py --mode phase. Use when coming back to an in-progress task and you need to know what to do next."
+description: "恢复当前 task 的工作。加载 workflow Phase Index，判断该从哪个 phase/step 继续，然后通过 get_context.py --mode phase 拉取 step 级详情。回到进行中的 task 且需要知道下一步做什么时使用。"
 ---
 
-# Continue Current Task
+# 继续当前 Task
 
-Resume work on the current task — pick up at the right phase/step in `.trellis/workflow.md`.
+恢复当前 task 的工作 — 在 `.trellis/workflow.md` 中从正确 phase/step 继续。
 
 ---
 
-## Step 1: Load Current Context
+## 第 1 步：加载当前 Context
 
 ```bash
 python3 ./.trellis/scripts/get_context.py
 ```
 
-Confirms: current task, git state, recent commits.
+确认：current task、git state、recent commits。
 
-## Step 2: Load the Phase Index
+## 第 2 步：加载 Phase Index
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode phase
 ```
 
-Shows the Phase Index (Plan / Execute / Finish) with routing + skill mapping.
+显示 Phase Index（Plan / Execute / Finish）及 routing + skill mapping。
 
-## Step 3: Decide Where You Are
+## 第 3 步：判断当前位置
 
-`get_context.py` shows the active task's `status` field. Route by `status` + artifact presence:
+`get_context.py` 显示 active task 的 `status` 字段。按 `status` + artifact 是否存在路由：
 
-- `status=planning` + no `prd.md` → **1.1** (load `trellis-brainstorm`)
-- `status=planning` + `prd.md` exists + `implement.jsonl` not curated (only the seed `_example` row) → **1.3**
-- `status=planning` + `prd.md` + curated `implement.jsonl` → **1.4** (run `task.py start` to enter Phase 2)
-- `status=in_progress` + implementation not started → **2.1**
-- `status=in_progress` + implementation done, not yet checked → **2.2**
+- `status=planning` + 没有 `prd.md` → **1.1**（加载 `trellis-brainstorm` 并创建中文 PRD）
+- `status=planning` + `prd.md` 存在 + `implement.jsonl` 未整理（只有种子 `_example` 行） → **1.3**
+- `status=planning` + `prd.md` + 已整理 `implement.jsonl` → **1.4**（运行 `task.py start` 进入 Phase 2）
+- `status=in_progress` + implementation 尚未开始 → **2.1**
+- `status=in_progress` + implementation 完成但尚未 check → **2.2**
 - `status=in_progress` + check passed → **3.1**
-- `status=completed` (rare; usually archived immediately) → archive flow
+- `status=completed`（少见；通常立即 archived） → archive flow
 
-Phase rules (full detail in `.trellis/workflow.md`):
+Phase 规则（完整详情在 `.trellis/workflow.md`）：
 
-1. Run steps **in order** within a phase — `[required]` steps must not be skipped
-2. `[once]` steps are already done if the output exists (e.g., `prd.md` for 1.1; `implement.jsonl` with curated entries for 1.3) — skip them
-3. You may go back to an earlier phase if discoveries require it
+1. 在 phase 内**按顺序**运行 steps — `[required]` steps 不得跳过
+2. 如果输出已存在，则 `[once]` steps 已完成（例如 1.1 的 `prd.md`；1.3 中带 curated entries 的 `implement.jsonl`）— 跳过它们
+3. 如果发现情况需要，可以回到更早的 phase
 
-## Step 4: Load the Specific Step
+## 第 4 步：加载具体 Step
 
-Once you know which step to resume at:
+一旦知道要从哪个 step 继续：
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode phase --step <X.X> --platform codex
 ```
 
-Follow the loaded instructions. After each `[required]` step completes, move to the next.
+遵循加载的说明。每个 `[required]` step 完成后，移动到下一步。
 
 ---
 
-## Reference
+## 参考
 
-Full workflow, skill routing table, and the DO-NOT-skip table live in `.trellis/workflow.md`. This command is only an entry point — the canonical guidance is there.
+完整 workflow、skill routing table 和 DO-NOT-skip table 位于 `.trellis/workflow.md`。此命令只是入口 — 规范指南在那里。

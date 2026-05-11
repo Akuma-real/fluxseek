@@ -1,92 +1,92 @@
 ---
 name: trellis-check
-description: "Comprehensive quality verification: spec compliance, lint, type-check, tests, cross-layer data flow, code reuse, and consistency checks. Use when code is written and needs quality verification, before committing changes, or to catch context drift during long sessions."
+description: "综合质量验证：spec compliance、lint、type-check、tests、cross-layer data flow、代码复用和一致性检查。代码已写完需要质量验证、提交变更前，或长 session 中捕捉 context drift 时使用。"
 ---
 
-# Code Quality Check
+# 代码质量检查
 
-Comprehensive quality verification for recently written code. Combines spec compliance, cross-layer safety, and pre-commit checks.
+对最近编写代码进行综合质量验证。结合 spec compliance、cross-layer 安全性和 pre-commit checks。
 
 ---
 
-## Step 1: Identify What Changed
+## 第 1 步：识别变更内容
 
 ```bash
 git diff --name-only HEAD
 git status
 ```
 
-## Step 2: Read Applicable Specs
+## 第 2 步：读取适用 Specs
 
 ```bash
 python3 ./.trellis/scripts/get_context.py --mode packages
 ```
 
-For each changed package/layer, read the spec index and follow its **Quality Check** section:
+对每个变更的 package/layer，读取 spec index 并遵循其 **质量检查** section：
 
 ```bash
 cat .trellis/spec/<package>/<layer>/index.md
 ```
 
-Read the specific guideline files referenced — the index is a pointer, not the goal.
+读取引用的具体 guideline files — index 是指针，不是目标。
 
-## Step 3: Run Project Checks
+## 第 3 步：运行项目检查
 
-Run the project's lint, type-check, and test commands. Fix any failures before proceeding.
+运行项目 lint、type-check 和 test 命令。继续前修复任何失败。
 
-## Step 4: Review Against Checklist
+## 第 4 步：按检查清单 review
 
-### Code Quality
+### 代码质量
 
-- [ ] Linter passes?
-- [ ] Type checker passes (if applicable)?
-- [ ] Tests pass?
-- [ ] No debug logging left in?
-- [ ] No suppressed warnings or type-safety bypasses?
+- [ ] Linter 是否通过？
+- [ ] Type checker 是否通过（如适用）？
+- [ ] Tests 是否通过？
+- [ ] 没有遗留 debug logging？
+- [ ] 没有 suppressed warnings 或 type-safety bypasses？
 
-### Test Coverage
+### 测试覆盖
 
-- [ ] New function → unit test added?
-- [ ] Bug fix → regression test added?
-- [ ] Changed behavior → existing tests updated?
+- [ ] 新 function → 已添加 unit test？
+- [ ] Bug fix → 已添加 regression test？
+- [ ] 行为变更 → 已更新 existing tests？
 
-### Spec Sync
+### Spec 同步
 
-- [ ] Does `.trellis/spec/` need updates? (new patterns, conventions, lessons learned)
+- [ ] `.trellis/spec/` 是否需要更新？（new patterns、conventions、lessons learned）
 
-> "If I fixed a bug or discovered something non-obvious, should I document it so future me won't hit the same issue?" → If YES, update the relevant spec doc.
+> “如果我修复了 bug 或发现了非显而易见的事情，我是否应该记录下来，让未来的我不再踩同一个坑？”→ 如果是，更新相关 spec doc。
 
-## Step 5: Cross-Layer Dimensions (if applicable)
+## 第 5 步：Cross-Layer 维度（如适用）
 
-Skip this step if your change is confined to a single layer.
+如果你的变更局限于单个 layer，跳过此步。
 
-### A. Data Flow (changes touch 3+ layers)
+### A. Data Flow（变更触及 3+ layers）
 
-- [ ] Read flow traces correctly: Storage → Service → API → UI
-- [ ] Write flow traces correctly: UI → API → Service → Storage
-- [ ] Types/schemas correctly passed between layers?
-- [ ] Errors properly propagated to caller?
+- [ ] Read flow trace 是否正确：Storage → Service → API → UI
+- [ ] Write flow trace 是否正确：UI → API → Service → Storage
+- [ ] Types/schemas 是否在 layers 间正确传递？
+- [ ] Errors 是否正确传播给 caller？
 
-### B. Code Reuse (modifying constants, creating utilities)
+### B. 代码复用（修改 constants、创建 utilities）
 
-- [ ] Searched for existing similar code before creating new?
+- [ ] 创建新代码前是否搜索过现有相似代码？
   ```bash
   grep -r "pattern" src/
   ```
-- [ ] If 2+ places define same value → extracted to shared constant?
-- [ ] After batch modification, all occurrences updated?
+- [ ] 如果 2+ 处定义同一值 → 是否提取为 shared constant？
+- [ ] 批量修改后，是否更新了所有 occurrences？
 
-### C. Import/Dependency (creating new files)
+### C. Import/Dependency（创建新文件）
 
-- [ ] Correct import paths (relative vs absolute)?
-- [ ] No circular dependencies?
+- [ ] Import paths 是否正确（relative vs absolute）？
+- [ ] 是否没有 circular dependencies？
 
 ### D. Same-Layer Consistency
 
-- [ ] Other places using the same concept are consistent?
+- [ ] 使用同一概念的其他地方是否一致？
 
 ---
 
-## Step 6: Report and Fix
+## 第 6 步：报告并修复
 
-Report violations found and fix them directly. Re-run project checks after fixes.
+报告发现的 violations，并直接修复。修复后重新运行项目检查。

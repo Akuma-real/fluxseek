@@ -1,31 +1,31 @@
-# Change Local Task Lifecycle
+# 修改本地 Task 生命周期
 
-Task lifecycle includes creation, start, context configuration, finish, archive, parent/child tasks, and lifecycle hooks. The default customization targets are `.trellis/tasks/`, `.trellis/config.yaml`, and `.trellis/scripts/`.
+Task lifecycle 包括 creation、start、context configuration、finish、archive、parent/child tasks 和 lifecycle hooks。默认自定义目标是 `.trellis/tasks/`、`.trellis/config.yaml` 和 `.trellis/scripts/`。
 
-## Read These Files First
+## 先读这些文件
 
 1. `.trellis/workflow.md`
 2. `.trellis/config.yaml`
 3. `.trellis/scripts/task.py`
 4. `.trellis/scripts/common/task_store.py`
 5. `.trellis/scripts/common/task_utils.py`
-6. The current task's `.trellis/tasks/<task>/task.json`
+6. 当前 task 的 `.trellis/tasks/<task>/task.json`
 
-## Common Needs And Edit Points
+## 常见需求与编辑点
 
-| Need | Edit point |
+| 需求 | 编辑点 |
 | --- | --- |
-| Automatically sync an external system after task creation | `hooks.after_create` in `.trellis/config.yaml`. |
-| Automatically update status after task start | `hooks.after_start` in `.trellis/config.yaml`. |
-| Run a script after task finish | `hooks.after_finish` in `.trellis/config.yaml`. |
-| Clean external resources after archive | `hooks.after_archive` in `.trellis/config.yaml`. |
-| Change default task fields | `.trellis/scripts/common/task_store.py`. |
-| Change task parsing/search | `.trellis/scripts/common/task_utils.py`. |
-| Change active task behavior | `.trellis/scripts/common/active_task.py`. |
+| task creation 后自动同步外部系统 | `.trellis/config.yaml` 中的 `hooks.after_create`。 |
+| task start 后自动更新 status | `.trellis/config.yaml` 中的 `hooks.after_start`。 |
+| task finish 后运行 script | `.trellis/config.yaml` 中的 `hooks.after_finish`。 |
+| archive 后清理外部资源 | `.trellis/config.yaml` 中的 `hooks.after_archive`。 |
+| 修改默认 task fields | `.trellis/scripts/common/task_store.py`。 |
+| 修改 task parsing/search | `.trellis/scripts/common/task_utils.py`。 |
+| 修改 active task behavior | `.trellis/scripts/common/active_task.py`。 |
 
 ## lifecycle hooks
 
-`.trellis/config.yaml` supports:
+`.trellis/config.yaml` 支持：
 
 ```yaml
 hooks:
@@ -39,13 +39,13 @@ hooks:
     - "python3 .trellis/scripts/hooks/my_sync.py archive"
 ```
 
-Hook commands receive the `TASK_JSON_PATH` environment variable, pointing to the current task's `task.json`. Hook failures should usually warn, but not block the main task operation.
+Hook commands 会收到 `TASK_JSON_PATH` environment variable，指向当前 task 的 `task.json`。Hook failures 通常应 warning，但不阻塞主 task 操作。
 
-## Change Task Fields
+## 修改 Task Fields
 
-If the user wants to add project-local fields, prefer putting them under `meta` in `task.json` to avoid breaking existing scripts' assumptions about standard fields.
+如果用户想添加 project-local fields，优先将它们放在 `task.json` 的 `meta` 下，以避免破坏 existing scripts 对 standard fields 的假设。
 
-Example:
+示例：
 
 ```json
 "meta": {
@@ -54,37 +54,37 @@ Example:
 }
 ```
 
-If standard fields really need to change, inspect every local script that reads `task.json`.
+如果确实需要修改 standard fields，检查每个读取 `task.json` 的本地 script。
 
-## Change Active Task
+## 修改 Active Task
 
-Active task is session-level state stored in `.trellis/.runtime/sessions/`. Do not fall back to a global `.current-task` model. If the user wants to change active task behavior, edit:
+Active task 是存储在 `.trellis/.runtime/sessions/` 的 session-level state。不要 fallback 到 global `.current-task` 模型。如果用户想修改 active task behavior，编辑：
 
 - `.trellis/scripts/common/active_task.py`
 - platform hooks or shell session bridges
 - active task descriptions in `.trellis/workflow.md`
 
-### `task.py create` Sets the Active Pointer
+### `task.py create` 设置 Active Pointer
 
-`cmd_create` in `.trellis/scripts/common/task_store.py` calls `set_active_task` best-effort right after writing the new task directory. The behavior:
+`.trellis/scripts/common/task_store.py` 中的 `cmd_create` 在写入新 task 目录后 best-effort 调用 `set_active_task`。行为：
 
-- When the calling shell carries session identity (`TRELLIS_CONTEXT_ID` env var, or any platform-specific session env that `resolve_context_key` recognizes — see `active_task.py:_ENV_SESSION_KEYS`), the per-session pointer at `.trellis/.runtime/sessions/<context_key>.json` is rewritten to point at the new task. The task's `status=planning` and `[workflow-state:planning]` fires on the very next `UserPromptSubmit`.
-- When session identity is unavailable (raw CLI invocation outside an AI session, or a platform that doesn't propagate identity to shell), the task directory is still created and `status=planning` is still written, but the active pointer is left untouched. The user can attach the task later with `task.py start <dir>` once they're back in an AI session.
+- 当调用 shell 带有 session identity（`TRELLIS_CONTEXT_ID` env var，或 `resolve_context_key` 能识别的任何平台特定 session env — 见 `active_task.py:_ENV_SESSION_KEYS`）时，`.trellis/.runtime/sessions/<context_key>.json` 中的 per-session pointer 会被重写为指向新 task。task 的 `status=planning` 和 `[workflow-state:planning]` 会在下一个 `UserPromptSubmit` 立即触发。
+- 当 session identity 不可用时（AI session 外的原始 CLI 调用，或不向 shell 传播 identity 的平台），task directory 仍会创建并写入 `status=planning`，但 active pointer 保持不变。用户回到 AI session 后，可稍后用 `task.py start <dir>` 关联该 task。
 
-This makes `[workflow-state:planning]` the live breadcrumb during the brainstorm and JSONL curation work that follows `task.py create`. The pre-R7 behavior left the breadcrumb stuck on `no_task` until `task.py start`, so the planning block was effectively dead text.
+这让 `[workflow-state:planning]` 成为 `task.py create` 之后 brainstorm 和 JSONL curation 工作期间的 live breadcrumb。pre-R7 行为会让 breadcrumb 在 `task.py start` 前卡在 `no_task`，因此 planning block 实际上是死文本。
 
-If you fork `task.py` to add a new creation path (e.g. an external import that bypasses `cmd_create`), audit whether your path also calls `set_active_task`. Without that call, your created tasks will not surface as active. The full status writer table is in `.trellis/spec/cli/backend/workflow-state-contract.md`.
+如果你 fork `task.py` 以添加新的 creation path（例如绕过 `cmd_create` 的外部 import），审计你的路径是否也调用 `set_active_task`。没有该调用时，你创建的 tasks 不会显示为 active。完整 status writer table 在 `.trellis/spec/cli/backend/workflow-state-contract.md`。
 
-## Modification Steps
+## 修改步骤
 
-1. Confirm the current task with `python3 ./.trellis/scripts/task.py current --source`.
-2. Read the current task's `task.json` and confirm status and fields.
-3. For configuration needs, edit `.trellis/config.yaml` first.
-4. For script behavior needs, then edit `.trellis/scripts/`.
-5. If the AI flow changed, synchronize `.trellis/workflow.md`.
+1. 用 `python3 ./.trellis/scripts/task.py current --source` 确认当前 task。
+2. 读取当前 task 的 `task.json` 并确认 status 和 fields。
+3. 对配置需求，先编辑 `.trellis/config.yaml`。
+4. 对 script 行为需求，再编辑 `.trellis/scripts/`。
+5. 如果 AI flow 改变，同步 `.trellis/workflow.md`。
 
-## Do Not
+## 不要
 
-- Do not directly edit `.trellis/.runtime/sessions/` to "fix" business state.
-- Do not hard-code project-private fields into scripts; prefer `meta`.
-- Do not default to asking the user to fork Trellis CLI.
+- 不要直接编辑 `.trellis/.runtime/sessions/` 来“修复”业务状态。
+- 不要把项目私有 fields 硬编码到 scripts；优先使用 `meta`。
+- 不要默认要求用户 fork Trellis CLI。

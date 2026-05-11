@@ -1,76 +1,76 @@
 ---
 name: trellis-break-loop
-description: "Deep bug analysis to break the fix-forget-repeat cycle. Analyzes root cause category, why fixes failed, prevention mechanisms, and captures knowledge into specs. Use after fixing a bug to prevent the same class of bugs."
+description: "深度 bug 分析，用于打破修复-遗忘-重复循环。分析 root cause 分类、fixes 失败原因、预防机制，并将知识捕获到 specs。修复 bug 后用于防止同类 bug。"
 ---
 
-# Break the Loop - Deep Bug Analysis
+# 打破循环 - 深度 Bug 分析
 
-When debug is complete, use this for deep analysis to break the "fix bug -> forget -> repeat" cycle.
+debug 完成后，使用此 skill 进行深度分析，打破“fix bug -> forget -> repeat”循环。
 
 ---
 
-## Analysis Framework
+## 分析框架
 
-Analyze the bug you just fixed from these 5 dimensions:
+从以下 5 个维度分析你刚修复的 bug：
 
-### 1. Root Cause Category
+### 1. Root Cause 分类
 
-Which category does this bug belong to?
+这个 bug 属于哪类？
 
-| Category | Characteristics | Example |
+| 分类 | 特征 | 示例 |
 |----------|-----------------|---------|
-| **A. Missing Spec** | No documentation on how to do it | New feature without checklist |
-| **B. Cross-Layer Contract** | Interface between layers unclear | API returns different format than expected |
-| **C. Change Propagation Failure** | Changed one place, missed others | Changed function signature, missed call sites |
-| **D. Test Coverage Gap** | Unit test passes, integration fails | Works alone, breaks when combined |
-| **E. Implicit Assumption** | Code relies on undocumented assumption | Timestamp seconds vs milliseconds |
+| **A. Missing Spec** | 没有说明该怎么做的文档 | 新功能没有 checklist |
+| **B. Cross-Layer Contract** | layers 之间接口不清楚 | API 返回格式与期望不同 |
+| **C. Change Propagation Failure** | 改了一处，漏了其他处 | 修改 function signature，漏了 call sites |
+| **D. Test Coverage Gap** | Unit test 通过，integration 失败 | 单独可用，组合后破坏 |
+| **E. Implicit Assumption** | 代码依赖未记录假设 | Timestamp seconds vs milliseconds |
 
-### 2. Why Fixes Failed (if applicable)
+### 2. Fixes 为什么失败（如适用）
 
-If you tried multiple fixes before succeeding, analyze each failure:
+如果成功前尝试过多种 fixes，分析每次失败：
 
-- **Surface Fix**: Fixed symptom, not root cause
-- **Incomplete Scope**: Found root cause, didn't cover all cases
-- **Tool Limitation**: grep missed it, type check wasn't strict
-- **Mental Model**: Kept looking in same layer, didn't think cross-layer
+- **Surface Fix**：修了症状，没修 root cause
+- **Incomplete Scope**：找到 root cause，但没覆盖所有情况
+- **Tool Limitation**：grep 漏掉了，type check 不够严格
+- **Mental Model**：一直看同一 layer，没有 cross-layer 思考
 
-### 3. Prevention Mechanisms
+### 3. 预防机制
 
-What mechanisms would prevent this from happening again?
+哪些机制能防止它再次发生？
 
-| Type | Description | Example |
+| 类型 | 描述 | 示例 |
 |------|-------------|---------|
-| **Documentation** | Write it down so people know | Update thinking guide |
-| **Architecture** | Make the error impossible structurally | Type-safe wrappers |
-| **Compile-time** | Strict type checking, no escape hatches | Signature change causes compile error |
-| **Runtime** | Monitoring, alerts, scans | Detect orphan entities |
-| **Test Coverage** | E2E tests, integration tests | Verify full flow |
-| **Code Review** | Checklist, PR template | "Did you check X?" |
+| **Documentation** | 写下来让大家知道 | 更新 thinking guide |
+| **Architecture** | 通过结构让错误不可能发生 | Type-safe wrappers |
+| **Compile-time** | 严格类型检查，无 escape hatches | Signature 变更导致 compile error |
+| **Runtime** | Monitoring、alerts、scans | 检测 orphan entities |
+| **Test Coverage** | E2E tests、integration tests | 验证完整 flow |
+| **Code Review** | Checklist、PR template | “你检查 X 了吗？” |
 
-### 4. Systematic Expansion
+### 4. 系统性扩展
 
-What broader problems does this bug reveal?
+这个 bug 揭示了哪些更广泛的问题？
 
-- **Similar Issues**: Where else might this problem exist?
-- **Design Flaw**: Is there a fundamental architecture issue?
-- **Process Flaw**: Is there a development process improvement?
-- **Knowledge Gap**: Is the team missing some understanding?
+- **Similar Issues**：哪里还可能存在这个问题？
+- **Design Flaw**：是否存在根本架构问题？
+- **Process Flaw**：开发流程是否可改进？
+- **Knowledge Gap**：团队是否缺少某些理解？
 
-### 5. Knowledge Capture
+### 5. 知识捕获
 
-Solidify insights into the system:
+将洞察固化到系统中：
 
-- [ ] Update `.trellis/spec/guides/` thinking guides
-- [ ] Update relevant `.trellis/spec/` docs
-- [ ] Create issue record (if applicable)
-- [ ] Create feature ticket for root fix
-- [ ] Update check guidelines if needed
+- [ ] 更新 `.trellis/spec/guides/` thinking guides
+- [ ] 更新相关 `.trellis/spec/` docs
+- [ ] 创建 issue record（如适用）
+- [ ] 为 root fix 创建 feature ticket
+- [ ] 需要时更新 check guidelines
 
 ---
 
-## Output Format
+## 输出格式
 
-Please output analysis in this format:
+请按此格式输出分析：
 
 ```markdown
 ## Bug Analysis: [Short Description]
@@ -100,31 +100,31 @@ Please output analysis in this format:
 
 ---
 
-## Core Philosophy
+## 核心理念
 
-> **The value of debugging is not in fixing the bug, but in making this class of bugs never happen again.**
+> **调试的价值不在于修复这个 bug，而在于让这类 bug 永远不再发生。**
 
-Three levels of insight:
-1. **Tactical**: How to fix THIS bug
-2. **Strategic**: How to prevent THIS CLASS of bugs
-3. **Philosophical**: How to expand thinking patterns
+三层洞察：
+1. **Tactical**：如何修复这个 bug
+2. **Strategic**：如何预防这一类 bugs
+3. **Philosophical**：如何扩展思维模式
 
-30 minutes of analysis saves 30 hours of future debugging.
+30 分钟分析可以节省未来 30 小时调试。
 
 ---
 
-## After Analysis: Immediate Actions
+## 分析后：立即行动
 
-**IMPORTANT**: After completing the analysis above, you MUST immediately:
+**重要**：完成上述分析后，你必须立即：
 
-1. **Update spec/guides** - Don't just list TODOs, actually update the relevant files:
-   - If it's a cross-platform issue → update `cross-platform-thinking-guide.md`
-   - If it's a cross-layer issue → update `cross-layer-thinking-guide.md`
-   - If it's a code reuse issue → update `code-reuse-thinking-guide.md`
-   - If it's domain-specific → update `backend/*.md` or `frontend/*.md`
+1. **更新 spec/guides** - 不要只列 TODOs，实际更新相关文件：
+   - 如果是 cross-platform issue → 更新 `cross-platform-thinking-guide.md`
+   - 如果是 cross-layer issue → 更新 `cross-layer-thinking-guide.md`
+   - 如果是 code reuse issue → 更新 `code-reuse-thinking-guide.md`
+   - 如果是 domain-specific → 更新 `backend/*.md` 或 `frontend/*.md`
 
-2. **Sync templates** - After updating `.trellis/spec/`, sync to `src/templates/markdown/spec/`
+2. **同步 templates** - 更新 `.trellis/spec/` 后，同步到 `src/templates/markdown/spec/`
 
-3. **Commit the spec updates** - This is the primary output, not just the analysis text
+3. **Commit spec updates** - 这是主要输出，而不只是分析文本
 
-> **The analysis is worthless if it stays in chat. The value is in the updated specs.**
+> **如果分析只停留在聊天中，它就没有价值。价值在于更新后的 specs。**

@@ -1,8 +1,8 @@
-# Local Task System
+# 本地 Task 系统
 
-The Trellis task system is stored entirely under `.trellis/tasks/` in the user project. Each task is a directory containing requirements, context, research, state, and relationship information.
+Trellis task 系统完全存储在用户项目的 `.trellis/tasks/` 下。每个 task 都是一个目录，包含需求、context、research、state 和关系信息。
 
-## Task Directory Structure
+## Task 目录结构
 
 ```text
 .trellis/tasks/
@@ -17,64 +17,64 @@ The Trellis task system is stored entirely under `.trellis/tasks/` in the user p
     └── 2026-04/
 ```
 
-| File | Purpose |
+| 文件 | 用途 |
 | --- | --- |
-| `task.json` | Task metadata: status, assignee, priority, branch, parent/child tasks, and similar fields. |
-| `prd.md` | Requirements document; the most important business context during implementation. |
-| `info.md` | Optional technical design. |
-| `implement.jsonl` | List of spec/research files the implement agent must read first. |
-| `check.jsonl` | List of spec/research files the check agent must read first. |
-| `research/` | Research artifacts. Complex findings should not live only in chat. |
+| `task.json` | Task metadata：status、assignee、priority、branch、parent/child tasks 等字段。 |
+| `prd.md` | 需求文档；实现期间最重要的业务 context。 |
+| `info.md` | 可选技术设计。 |
+| `implement.jsonl` | implement agent 必须先读取的 spec/research files 列表。 |
+| `check.jsonl` | check agent 必须先读取的 spec/research files 列表。 |
+| `research/` | Research artifacts。复杂 findings 不应只存在聊天中。 |
 
 ## `task.json`
 
-`task.json` records task status and metadata. Common fields:
+`task.json` 记录 task status 和 metadata。常见字段：
 
-| Field | Meaning |
+| 字段 | 含义 |
 | --- | --- |
-| `id` / `name` / `title` | Task identity and title. |
-| `status` | Status such as `planning`, `in_progress`, `review`, or `completed`. |
-| `priority` | `P0`, `P1`, `P2`, `P3`. |
-| `creator` / `assignee` | Creator and assignee. |
-| `package` | Target package in a monorepo; may be empty. |
-| `branch` / `base_branch` | Working branch and PR target branch. |
-| `children` / `parent` | Parent/child task relationships. |
-| `commit` / `pr_url` | Commit and PR information after completion. |
-| `meta` | Extension fields. |
+| `id` / `name` / `title` | Task identity 和 title。 |
+| `status` | `planning`、`in_progress`、`review` 或 `completed` 等 status。 |
+| `priority` | `P0`、`P1`、`P2`、`P3`。 |
+| `creator` / `assignee` | Creator 和 assignee。 |
+| `package` | monorepo 中的 target package；可为空。 |
+| `branch` / `base_branch` | Working branch 和 PR target branch。 |
+| `children` / `parent` | Parent/child task relationships。 |
+| `commit` / `pr_url` | 完成后的 Commit 和 PR 信息。 |
+| `meta` | 扩展字段。 |
 
-The AI should not treat phase numbers as task status. Task progress is mainly determined by `status`, `prd.md`, whether JSONL context is configured, and the phase descriptions in `workflow.md`.
+AI 不应把 phase numbers 当作 task status。Task 进度主要由 `status`、`prd.md`、JSONL context 是否已配置，以及 `workflow.md` 中的 phase 描述决定。
 
 ## Active Task
 
-The user sees a "current task," but Trellis stores active task state per session.
+用户看到的是“current task”，但 Trellis 按 session 存储 active task state。
 
 ```text
 .trellis/.runtime/sessions/<context-key>.json
 ```
 
-`task.py start` writes the task path into the runtime session file for the current session. `task.py current --source` shows the current task and where it came from. Different AI windows can point to different tasks without overwriting each other.
+`task.py start` 将 task path 写入当前 session 的 runtime session file。`task.py current --source` 显示 current task 及其来源。不同 AI 窗口可以指向不同 tasks，且不会互相覆盖。
 
-If the platform or shell environment has no stable session identity, `task.py start` may be unable to set the active task. The AI should read the error, inspect the platform hook/session environment, and not fall back to a shared global pointer.
+如果平台或 shell environment 没有稳定 session identity，`task.py start` 可能无法设置 active task。AI 应读取错误、检查平台 hook/session environment，而不是 fallback 到共享 global pointer。
 
 ## JSONL Context
 
-`implement.jsonl` and `check.jsonl` are context manifests for sub-agents to read first.
+`implement.jsonl` 和 `check.jsonl` 是 sub-agents 必须优先读取的 context manifests。
 
-Format:
+格式：
 
 ```jsonl
 {"file": ".trellis/spec/cli/backend/index.md", "reason": "Backend conventions"}
 {"file": ".trellis/tasks/04-28-example/research/api.md", "reason": "API research"}
 ```
 
-Rules:
+规则：
 
-- Include spec and research files.
-- Do not include code files that are about to be modified.
-- Do not treat temporary conclusions in chat as the only context.
-- Seed rows have no `file` field; they only prompt the AI to fill in real entries.
+- 包含 spec 和 research files。
+- 不要包含即将修改的 code files。
+- 不要把聊天中的临时结论当成唯一 context。
+- 种子行没有 `file` 字段；它们只提示 AI 填入真实条目。
 
-## Common Commands
+## 常用命令
 
 ```bash
 python3 ./.trellis/scripts/task.py create "<title>" --slug <slug>
@@ -86,16 +86,16 @@ python3 ./.trellis/scripts/task.py finish
 python3 ./.trellis/scripts/task.py archive <task>
 ```
 
-When modifying the task system, the AI should prefer script commands to maintain structure. Edit JSON/Markdown directly only when scripts do not cover the need.
+修改 task system 时，AI 应优先使用 script commands 维护结构。只有 scripts 无法覆盖需求时才直接编辑 JSON/Markdown。
 
-## Local Customization Points
+## 本地自定义点
 
-| Need | Edit location |
+| 需求 | 编辑位置 |
 | --- | --- |
-| Change the default task template | `.trellis/scripts/common/task_store.py` and task creation instructions. |
-| Change status semantics | `.trellis/workflow.md`, workflow-state hook logic, and task usage conventions. |
-| Add task lifecycle actions | `hooks.after_*` in `.trellis/config.yaml`. |
-| Change context rules | Phase 1.3 in `.trellis/workflow.md` and related platform agent/hook instructions. |
-| Change archive policy | `.trellis/scripts/common/task_store.py` / `task_utils.py`. |
+| 修改默认 task template | `.trellis/scripts/common/task_store.py` 和 task creation instructions。 |
+| 修改 status 语义 | `.trellis/workflow.md`、workflow-state hook logic 和 task usage conventions。 |
+| 添加 task lifecycle actions | `.trellis/config.yaml` 中的 `hooks.after_*`。 |
+| 修改 context rules | `.trellis/workflow.md` 中的 Phase 1.3 和相关 platform agent/hook instructions。 |
+| 修改 archive policy | `.trellis/scripts/common/task_store.py` / `task_utils.py`。 |
 
-These are local files in the user project. Do not default to editing Trellis CLI source code unless the user wants to contribute upstream.
+这些是用户项目中的本地文件。除非用户想贡献 upstream，否则不要默认编辑 Trellis CLI source code。

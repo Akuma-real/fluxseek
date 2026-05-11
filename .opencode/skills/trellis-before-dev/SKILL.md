@@ -1,34 +1,34 @@
 ---
 name: trellis-before-dev
-description: "Discovers and injects project-specific coding guidelines from .trellis/spec/ before implementation begins. Reads spec indexes, pre-development checklists, and shared thinking guides for the target package. Use when starting a new coding task, before writing any code, switching to a different package, or needing to refresh project conventions and standards."
+description: "实现开始前，从 .trellis/spec/ 发现并注入项目特定编码指南。读取目标 package 的 spec indexes、开发前检查清单和共享思考指南。开始新编码 task、写任何代码前、切换到不同 package 或需要刷新项目约定与标准时使用。"
 ---
 
-Read the relevant development guidelines before starting your task.
+开始 task 前读取相关开发指南。
 
-Execute these steps:
+执行以下步骤：
 
-1. **Discover packages and their spec layers**:
+1. **发现 packages 及其 spec layers**：
    ```bash
    python3 ./.trellis/scripts/get_context.py --mode packages
    ```
 
-2. **Identify which specs apply** to your task based on:
-   - Which package you're modifying (e.g., `cli/`, `docs-site/`)
-   - What type of work (backend, frontend, unit-test, docs, etc.)
+2. 基于以下内容**识别哪些 specs 适用**于你的 task：
+   - 你正在修改哪个 package（例如 `cli/`、`docs-site/`）
+   - 工作类型（backend、frontend、unit-test、docs 等）
 
-3. **Read the spec index** for each relevant module:
+3. **读取每个相关模块的 spec index**：
    ```bash
    cat .trellis/spec/<package>/<layer>/index.md
    ```
-   Follow the **"Pre-Development Checklist"** section in the index.
+    遵循 index 中的 **"开发前检查清单"** section。
 
-4. **Read the specific guideline files** listed in the Pre-Development Checklist that are relevant to your task. The index is NOT the goal — it points you to the actual guideline files (e.g., `error-handling.md`, `conventions.md`, `mock-strategies.md`). Read those files to understand the coding standards and patterns.
+4. **读取 开发前检查清单 中列出的、与 task 相关的具体 guideline files**。Index 不是目标 — 它会指向实际 guideline files（例如 `error-handling.md`、`conventions.md`、`mock-strategies.md`）。读取这些文件以理解编码标准和 patterns。
 
-5. **Always read shared guides**:
+5. **始终读取共享 guides**：
    ```bash
    cat .trellis/spec/guides/index.md
    ```
 
-6. Understand the coding standards and patterns you need to follow, then proceed with your development plan.
+6. 理解你需要遵循的编码标准和 patterns，然后继续你的开发计划。
 
-This step is **mandatory** before writing any code.
+写任何代码前，此步骤是**强制的**。

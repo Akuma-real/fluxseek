@@ -1,18 +1,18 @@
-# Change Local Agents
+# 修改本地 Agents
 
-When the user wants to change `trellis-research`, `trellis-implement`, or `trellis-check` behavior, edit platform agent files in the user project.
+当用户想修改 `trellis-research`、`trellis-implement` 或 `trellis-check` 行为时，编辑用户项目中的平台 agent files。
 
-## Read These Files First
+## 先读这些文件
 
-1. Target platform agent directory
+1. 目标平台 agent directory
 2. `.trellis/workflow.md` Phase 2 / research routing
-3. Current task `prd.md`
-4. Current task `implement.jsonl` / `check.jsonl`
-5. Relevant hook or agent prelude
+3. 当前 task `prd.md`
+4. 当前 task `implement.jsonl` / `check.jsonl`
+5. 相关 hook 或 agent prelude
 
-## Common Paths
+## 常见路径
 
-| Platform | Path |
+| 平台 | 路径 |
 | --- | --- |
 | Claude Code | `.claude/agents/trellis-*.md` |
 | Cursor | `.cursor/agents/trellis-*.md` |
@@ -25,30 +25,30 @@ When the user wants to change `trellis-research`, `trellis-implement`, or `trell
 | Factory Droid | `.factory/droids/trellis-*.md` |
 | Pi Agent | `.pi/agents/trellis-*.md` |
 
-Use the actual paths in the user project as authoritative.
+以用户项目中的实际路径为权威。
 
-## Common Needs
+## 常见需求
 
-| Need | Which agent to edit |
+| 需求 | 要编辑的 agent |
 | --- | --- |
-| Research must write files, not only reply in chat | `trellis-research` |
-| Certain local specs must be read before implementation | `trellis-implement` + `implement.jsonl` configuration rules |
-| Specific commands must run during checking | `trellis-check` |
-| Agent must not modify certain directories | The corresponding agent's write boundary instructions |
-| Agent output format must be fixed | The corresponding agent's final/reporting instructions |
+| Research 必须写文件，而不是只在聊天中回复 | `trellis-research` |
+| 某些 local specs 必须在 implementation 前读取 | `trellis-implement` + `implement.jsonl` configuration rules |
+| checking 期间必须运行特定 commands | `trellis-check` |
+| Agent 不得修改某些目录 | 对应 agent 的 write boundary instructions |
+| Agent output format 必须固定 | 对应 agent 的 final/reporting instructions |
 
-## Modification Principles
+## 修改原则
 
-1. **Preserve role boundaries**: research investigates and persists; implement writes implementation; check reviews and fixes.
-2. **Do not hard-code project specs into agents**: long-term specs belong in `.trellis/spec/`; agents are responsible for reading them.
-3. **Make read order explicit**: active task -> PRD -> info -> JSONL -> spec/research.
-4. **Make write boundaries explicit**: which directories may be written and which may not.
-5. **Synchronize across platforms**: when the user configured multiple platforms, decide whether to change only the current platform or all platform agents.
+1. **保留角色边界**：research 调研并持久化；implement 写实现；check review 并修复。
+2. **不要把项目 specs 硬编码进 agents**：长期 specs 属于 `.trellis/spec/`；agents 负责读取它们。
+3. **明确读取顺序**：active task -> PRD -> info -> JSONL -> spec/research。
+4. **明确写入边界**：哪些目录可以写，哪些不可以。
+5. **跨平台同步**：当用户配置了多个平台时，判断只修改当前平台还是所有平台 agents。
 
-## Agent Pull Platforms
+## Agent Pull 平台
 
-If an agent file contains a prelude for "read task/context after startup," do not remove those steps when editing. Otherwise the agent will work only from chat context and bypass Trellis's core mechanism.
+如果 agent file 包含“启动后读取 task/context”的 prelude，编辑时不要移除这些 steps。否则 agent 将只基于 chat context 工作，并绕过 Trellis 的核心机制。
 
-## Hook Push Platforms
+## Hook Push 平台
 
-If context is injected by a hook, the agent file should still retain responsibility boundaries. Do not remove PRD/spec requirements from the agent just because a hook injects context.
+如果 context 由 hook 注入，agent file 仍应保留职责边界。不要因为 hook 会注入 context 就从 agent 中移除 PRD/spec 要求。
