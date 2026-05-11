@@ -49,13 +49,14 @@ Task is not required when the answer is a one-reply explanation, no files are ch
 
 | `status` | Artifact state | Resume at |
 | --- | --- | --- |
-| `planning` | `prd.md` 缺失 | Phase 1.1（加载 `trellis-brainstorm`） |
-| `planning` | `prd.md` 存在，`implement.jsonl` 只有种子 `_example` 行 | Phase 1.3（curate JSONL context） |
-| `planning` | `prd.md` 存在，`implement.jsonl` 已整理 | Phase 1.4（运行 `task.py start`） |
-| `in_progress` | conversation history 中无 implementation | Phase 2.1（`trellis-implement`） |
-| `in_progress` | implementation 完成，未运行 `trellis-check` | Phase 2.2（`trellis-check`） |
-| `in_progress` | check passed | Phase 3.1（verify quality + spec update） |
-| `completed` | task 仍在 active tree | Phase 3.5（运行 `/trellis:finish-work` 以 archive） |
+| `planning` | `prd.md` missing | Phase 1.1 (load `trellis-brainstorm`) |
+| `planning` | lightweight task with `prd.md` complete | ask for start review, then run `task.py start` |
+| `planning` | complex task missing `design.md` or `implement.md` | complete missing planning artifacts |
+| `planning` | complex task has `prd.md`, `design.md`, and `implement.md` | ask for start review, then run `task.py start` |
+| `in_progress` | no implementation in conversation history | Phase 2.1 (`trellis-implement`) |
+| `in_progress` | implementation done, no `trellis-check` run | Phase 2.2 (`trellis-check`) |
+| `in_progress` | check passed | Phase 3.1 (verify quality + spec update) |
+| `completed` | task is still in active tree | Phase 3.5 (run `/trellis:finish-work` to archive) |
 
 添加 custom status（例如 `in-review`）时，在 `.trellis/workflow.md` 中添加 `[workflow-state:in-review]` block 供每轮 breadcrumb 使用，并扩展此 route table — 通常通过编辑 `/trellis:continue` command file（`.{platform}/commands/trellis/continue.md` 或等价文件）添加一行，决定从哪里 resume。没有 route entry 时，`/trellis:continue` 会落入 default branch，用户不会进入你预期的 step。
 

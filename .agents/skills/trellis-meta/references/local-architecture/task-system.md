@@ -9,7 +9,8 @@ Trellis task 系统完全存储在用户项目的 `.trellis/tasks/` 下。每个
 ├── 04-28-example-task/
 │   ├── task.json
 │   ├── prd.md
-│   ├── info.md
+│   ├── design.md
+│   ├── implement.md
 │   ├── implement.jsonl
 │   ├── check.jsonl
 │   └── research/
@@ -19,12 +20,13 @@ Trellis task 系统完全存储在用户项目的 `.trellis/tasks/` 下。每个
 
 | 文件 | 用途 |
 | --- | --- |
-| `task.json` | Task metadata：status、assignee、priority、branch、parent/child tasks 等字段。 |
-| `prd.md` | 需求文档；实现期间最重要的业务 context。 |
-| `info.md` | 可选技术设计。 |
-| `implement.jsonl` | implement agent 必须先读取的 spec/research files 列表。 |
-| `check.jsonl` | check agent 必须先读取的 spec/research files 列表。 |
-| `research/` | Research artifacts。复杂 findings 不应只存在聊天中。 |
+| `task.json` | Task metadata: status, assignee, priority, branch, parent/child tasks, and similar fields. |
+| `prd.md` | Requirements, constraints, and acceptance criteria. Lightweight tasks may be PRD-only. |
+| `design.md` | Technical design for complex tasks: boundaries, contracts, data flow, compatibility, tradeoffs. |
+| `implement.md` | Execution plan for complex tasks: ordered checklist, validation commands, review gates, rollback points. |
+| `implement.jsonl` | List of spec/research files the implement agent must read first. |
+| `check.jsonl` | List of spec/research files the check agent must read first. |
+| `research/` | Research artifacts. Complex findings should not live only in chat. |
 
 ## `task.json`
 

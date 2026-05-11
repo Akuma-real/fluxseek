@@ -27,8 +27,8 @@ permission:
 
 在上方输入中查找 `<!-- trellis-hook-injected -->` marker。
 
-- **如果 marker 存在**：上方已为你自动加载 prd / spec / research files。直接继续 check work。
-- **如果 marker 不存在**：hook injection 未触发（Windows + Claude Code、`--continue` resume、fork distribution、hooks disabled 等）。从 dispatch prompt 第一行 `Active task: <path>` 找到 active task path（或 fallback 运行 `python3 ./.trellis/scripts/task.py current --source`），然后在工作前自行读取 `<task-path>/prd.md` 和 `<task-path>/check.jsonl` 中列出的 spec files。
+- **如果 marker 存在**：上方已为你自动加载 task artifacts、spec 和 research files。直接继续 check work。
+- **如果 marker 不存在**：hook injection 未触发（Windows + Claude Code、`--continue` resume、fork distribution、hooks disabled 等）。从 dispatch prompt 第一行 `Active task: <path>` 找到 active task path（或 fallback 运行 `python3 ./.trellis/scripts/task.py current --source`），然后在检查前自行读取 `<task-path>/check.jsonl`、其中列出的每个文件、`<task-path>/prd.md`、存在时的 `<task-path>/design.md` 和存在时的 `<task-path>/implement.md`。
 
 ## Context
 

@@ -190,7 +190,7 @@ cat .trellis/spec/<category>/<file>.md
 
 **Decision**: We chose Option X because...
 
-**Example**:
+**示例**：
 \`\`\`typescript
 // How it's implemented
 code example
@@ -208,7 +208,7 @@ code example
 
 **Why**: Why we do it this way in this project.
 
-**Example**:
+**示例**：
 \`\`\`typescript
 // How to follow this convention
 code example
@@ -226,7 +226,7 @@ code example
 
 **Solution**: Brief description of the approach.
 
-**Example**:
+**示例**：
 \`\`\`
 // Good
 code example

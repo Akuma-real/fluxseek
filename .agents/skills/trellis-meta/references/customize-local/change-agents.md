@@ -7,7 +7,7 @@
 1. 目标平台 agent directory
 2. `.trellis/workflow.md` Phase 2 / research routing
 3. 当前 task `prd.md`
-4. 当前 task `implement.jsonl` / `check.jsonl`
+4. 当前 task 的 `implement.jsonl` / `check.jsonl`
 5. 相关 hook 或 agent prelude
 
 ## 常见路径

@@ -24,18 +24,19 @@ python3 ./.trellis/scripts/get_context.py --mode phase
 
 `get_context.py` 显示 active task 的 `status` 字段。按 `status` + artifact 是否存在路由：
 
-- `status=planning` + 没有 `prd.md` → **1.1**（加载 `trellis-brainstorm` 并创建中文 PRD）
-- `status=planning` + `prd.md` 存在 + `implement.jsonl` 未整理（只有种子 `_example` 行） → **1.3**
-- `status=planning` + `prd.md` + 已整理 `implement.jsonl` → **1.4**（运行 `task.py start` 进入 Phase 2）
-- `status=in_progress` + implementation 尚未开始 → **2.1**
-- `status=in_progress` + implementation 完成但尚未 check → **2.2**
-- `status=in_progress` + check passed → **3.1**
+- `status=planning` + 无 `prd.md` → **1.1**（加载 `trellis-brainstorm`）
+- `status=planning` + 只有 `prd.md` → 判断 task 是轻量还是复杂。轻量可以进入 **1.4** review；复杂返回 **1.1** 补充 `design.md` + `implement.md`。
+- `status=planning` + 复杂 artifacts 已完成 + sub-agent jsonl 未整理（只有种子 `_example` 行） → **1.3**
+- `status=planning` + 所需 artifacts 已完成 + 所需 jsonl 已整理或 inline mode → **1.4**（请求 start review；仅在用户确认后运行 `task.py start`）
+- `status=in_progress` + implementation 未开始 → **2.1**
+- `status=in_progress` + implementation 已完成但尚未检查 → **2.2**
+- `status=in_progress` + check 已通过 → **3.1**
 - `status=completed`（少见；通常立即 archived） → archive flow
 
 Phase 规则（完整详情在 `.trellis/workflow.md`）：
 
 1. 在 phase 内**按顺序**运行 steps — `[required]` steps 不得跳过
-2. 如果输出已存在，则 `[once]` steps 已完成（例如 1.1 的 `prd.md`；1.3 中带 curated entries 的 `implement.jsonl`）— 跳过它们
+2. 如果所需输出已存在，则 `[once]` steps 已完成。`prd.md` alone 只对轻量 tasks 足够；复杂 tasks 还需要 `design.md` 和 `implement.md`。
 3. 如果发现情况需要，可以回到更早的 phase
 
 ## 第 4 步：加载具体 Step
@@ -52,4 +53,4 @@ python3 ./.trellis/scripts/get_context.py --mode phase --step <X.X> --platform o
 
 ## 参考
 
-完整 workflow、skill routing table 和 DO-NOT-skip table 位于 `.trellis/workflow.md`。此命令只是入口 — 规范指南在那里。
+完整 workflow 和详细 phase steps 位于 `.trellis/workflow.md`。此命令只是入口 — 规范指南在那里。

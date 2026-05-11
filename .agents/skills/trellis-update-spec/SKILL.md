@@ -190,7 +190,7 @@ cat .trellis/spec/<category>/<file>.md
 
 **Decision**: We chose Option X because...
 
-**Example**:
+**示例**：
 \`\`\`typescript
 // How it's implemented
 code example
@@ -208,7 +208,7 @@ code example
 
 **Why**: Why we do it this way in this project.
 
-**Example**:
+**示例**：
 \`\`\`typescript
 // How to follow this convention
 code example
@@ -226,7 +226,7 @@ code example
 
 **Solution**: Brief description of the approach.
 
-**Example**:
+**示例**：
 \`\`\`
 // Good
 code example
@@ -261,15 +261,15 @@ good code example
 ### 添加 Common Mistake
 
 ```markdown
-### Common Mistake: Description
+### 常见错误：说明
 
-**Symptom**: What goes wrong
+**症状**：出现什么问题
 
-**Cause**: Why this happens
+**原因**：为什么会发生
 
-**Fix**: How to correct it
+**修复**：如何纠正
 
-**Prevention**: How to avoid it in the future
+**预防**：未来如何避免
 ```
 
 ### 添加 Gotcha

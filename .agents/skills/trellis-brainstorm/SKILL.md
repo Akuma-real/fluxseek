@@ -114,10 +114,39 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "brainstorm: <short goal>" 
 
 * <本 task 不会做什么>
 
-## 技术备注
+## 研究参考
 
-* <已检查文件、约束、links、references>
-* <适用时填写 research notes 摘要>
+* <links to research/*.md or external references>
+```
+
+对于复杂 tasks，还要创建/更新：
+
+```markdown
+# design.md
+
+## 技术设计
+
+<边界、contracts、data flow、兼容性、tradeoffs>
+
+## Rollout / Rollback
+
+<适用时填写 operational notes>
+```
+
+```markdown
+# implement.md
+
+## 实现 Checklist
+
+- [ ] <有序 implementation step>
+
+## Validation
+
+- <lint/typecheck/test command>
+
+## Review Gates（检查门槛）
+
+- <开始/完成前的人类或技术 checkpoint>
 ```
 
 ---
@@ -138,10 +167,10 @@ TASK_DIR=$(python3 ./.trellis/scripts/task.py create "brainstorm: <short goal>" 
 * 查找 existing PRDs/specs/templates
 * 查找 command usage examples、README、ADRs（如有）
 
-将 findings 写入中文 PRD：
+将 findings 写入 task artifacts：
 
 * 添加到 `已知信息`
-* 将 constraints/links 添加到 `技术备注`
+* 将 technical findings 适当地写入 `research/*.md`、`design.md` 或 `implement.md`
 
 ---
 
@@ -436,16 +465,13 @@ PRD 本身只应引用已持久化 research files，不要重复其内容。添�
 
 * ...
 
-**技术方案**：
-<简要摘要 + 关键决策>
+**Artifact status**：
 
-**实现计划（小 PRs）**：
+* prd.md：<ready / needs update>
+* design.md：<not needed for lightweight / ready / missing>
+* implement.md：<not needed for lightweight / ready / missing>
 
-* PR1: <scaffolding + tests + minimal plumbing>
-* PR2: <core behavior>
-* PR3: <edge cases + docs + cleanup>
-
-这样是否正确？如果是，我会继续进入实现。
+这样是否正确？如果是，下一步是在 `task.py start` 前进行 planning review。
 ```
 
 ### Subtask 拆分（复杂 Tasks）
@@ -486,21 +512,9 @@ python3 ./.trellis/scripts/task.py add-subtask "$TASK_DIR" "$CHILD_DIR"
 
 * ...
 
-## 技术方案
+## 研究参考
 
-<关键设计 + 决策>
-
-## 决策（ADR-lite）
-
-背景 / 决策 / 后果
-
-## 不在范围内
-
-* ...
-
-## 技术备注
-
-<约束、references、files、research notes>
+* <links to research/*.md or external references>
 ```
 
 ---
@@ -517,25 +531,25 @@ python3 ./.trellis/scripts/task.py add-subtask "$TASK_DIR" "$CHILD_DIR"
 
 ## 与 Start Workflow 的集成
 
-brainstorm 完成后（第 8 步确认通过），flow 继续进入 Task Workflow 的 **Phase 2：准备实现**：
+brainstorm 完成后（第 8 步确认通过），flow 继续进入 Task Workflow 的 planning review gate：
 
 ```text
 Brainstorm
   步骤 0：创建 task directory + 初始化中文 PRD
   步骤 1–7：发现 requirements，research，converge
-  步骤 8：最终确认 → 用户批准
+  步骤 8：最终确认 → 用户批准 planning artifacts
   ↓
-Task Workflow Phase 2（准备实现）
-  Code-Spec Depth Check (if applicable)
-  → Research codebase (based on confirmed PRD)
-  → Configure code-spec context (jsonl files)
-  → Activate task
+Task Workflow Phase 1（Plan）
+  轻量 task → PRD-only 可以足够
+  复杂 task → 需要 design.md + implement.md
+  Sub-agent 平台 → 整理 implement.jsonl / check.jsonl manifests
+  → Review gate → task.py start
   ↓
-Task Workflow Phase 3 (Execute)
+Task Workflow Phase 2（Execute）
   Implement → Check → Complete
 ```
 
-task directory 和 PRD 已在 brainstorm 中存在，因此完全跳过 Task Workflow 的 Phase 1。
+task directory 和 PRD 已在 brainstorm 中存在，但 Phase 1 不会被跳过；它负责 artifact review 和 `task.py start` gate。
 
 ---
 

@@ -13,7 +13,7 @@ Trellis agent files 定义专门角色。用户项目中的常见 Trellis agents
 | Agent | 职责 |
 | --- | --- |
 | `trellis-research` | 调研问题，并将 findings 写入当前 task 的 `research/`。 |
-| `trellis-implement` | 根据 `prd.md`、`info.md`、`implement.jsonl` 和相关 spec/research 实现。 |
+| `trellis-implement` | 根据 `prd.md`、可选的 `design.md` / `implement.md`、`implement.jsonl` 和相关 spec/research 实现。 |
 | `trellis-check` | Review changes，修复发现的问题，并运行必要检查。 |
 
 Agent files 不应变成通用聊天 prompts。它们应定义 input sources、write boundaries、是否可修改代码，以及如何报告结果。
@@ -50,10 +50,11 @@ Kilo、Antigravity 和 Windsurf 等 main-session workflow 平台可能没有 Tre
 Agent file 指示 agent 启动后读取：
 
 - `python3 ./.trellis/scripts/task.py current --source`
-- current task `prd.md`
-- `info.md`
 - `implement.jsonl` or `check.jsonl`
 - spec/research files referenced by JSONL
+- current task `prd.md`
+- `design.md` if present
+- `implement.md` if present
 
 此模式适用于 hooks 无法可靠重写 sub-agent prompts 的平台。
 

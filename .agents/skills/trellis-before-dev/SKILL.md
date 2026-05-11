@@ -7,14 +7,20 @@ description: "实现开始前，从 .trellis/spec/ 发现并注入项目特定�
 
 执行以下步骤：
 
-1. **发现 packages 及其 spec layers**：
+1. **读取当前 task artifacts**：
+   - `prd.md`：需求和验收标准
+   - `design.md`（如存在）：技术设计
+   - `implement.md`（如存在）：执行顺序和验证计划
+
+2. **发现 packages 及其 spec layers**：
    ```bash
    python3 ./.trellis/scripts/get_context.py --mode packages
    ```
 
-2. 基于以下内容**识别哪些 specs 适用**于你的 task：
+3. **根据以下信息识别适用于当前 task 的 specs**：
    - 你正在修改哪个 package（例如 `cli/`、`docs-site/`）
    - 工作类型（backend、frontend、unit-test、docs 等）
+   - task artifacts 引用的任何 spec/research paths
 
 3. **读取每个相关模块的 spec index**：
    ```bash

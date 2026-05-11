@@ -9,7 +9,7 @@ Trellis context injection 的目标是让 AI 在正确时间读取正确文件�
 | session context | `.trellis/scripts/get_context.py` | Current developer、git status、active task、active tasks、journal、packages。 |
 | workflow context | `.trellis/workflow.md` | 当前 Trellis flow 和 next action。 |
 | spec context | `.trellis/spec/` + task JSONL | implementation/checking 期间必须遵循的 specs。 |
-| task context | `.trellis/tasks/<task>/prd.md`、`info.md`、`research/` | 当前 task requirements、design 和 research。 |
+| task context | `.trellis/tasks/<task>/prd.md`、`design.md`、`implement.md`、`research/` | 当前 task requirements、design、execution plan 和 research。 |
 | platform context | Platform hooks/settings/agents | 让不同 AI tools 通过各自机制读取上述文件。 |
 
 ## session-start

@@ -73,29 +73,29 @@ debug 完成后，使用此 skill 进行深度分析，打破“fix bug -> forge
 请按此格式输出分析：
 
 ```markdown
-## Bug Analysis: [Short Description]
+## Bug 分析：[简短说明]
 
-### 1. Root Cause Category
-- **Category**: [A/B/C/D/E] - [Category Name]
-- **Specific Cause**: [Detailed description]
+### 1. Root Cause 分类
+- **分类**：[A/B/C/D/E] - [分类名称]
+- **具体原因**：[详细说明]
 
-### 2. Why Fixes Failed (if applicable)
-1. [First attempt]: [Why it failed]
-2. [Second attempt]: [Why it failed]
+### 2. Fixes 为什么失败（如适用）
+1. [第一次尝试]：[失败原因]
+2. [第二次尝试]：[失败原因]
 ...
 
-### 3. Prevention Mechanisms
-| Priority | Mechanism | Specific Action | Status |
+### 3. 预防机制
+| 优先级 | 机制 | 具体行动 | 状态 |
 |----------|-----------|-----------------|--------|
 | P0 | ... | ... | TODO/DONE |
 
-### 4. Systematic Expansion
-- **Similar Issues**: [List places with similar problems]
-- **Design Improvement**: [Architecture-level suggestions]
-- **Process Improvement**: [Development process suggestions]
+### 4. 系统性扩展
+- **相似问题**：[列出可能有相似问题的位置]
+- **设计改进**：[架构层建议]
+- **流程改进**：[开发流程建议]
 
-### 5. Knowledge Capture
-- [ ] [Documents to update / tickets to create]
+### 5. 知识捕获
+- [ ] [要更新的文档 / 要创建的 tickets]
 ```
 
 ---

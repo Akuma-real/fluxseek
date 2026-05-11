@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/tooling/index.md", "reason": "Trellis update 后的文档/平台文件本地化需遵守 tooling 命令与范围规则。"}
+{"file": ".trellis/spec/guides/index.md", "reason": "重新中文化前需遵守修改前搜索和跨文件一致性思考规则。"}

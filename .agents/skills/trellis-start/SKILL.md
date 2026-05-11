@@ -41,12 +41,13 @@ Index files 会列出实际开始编码时要读取的具体 guideline docs。
 ## 第 4 步：决定下一步 action
 通过第 1 步你已知道 current task。检查 task 目录：
 
-- **Active task + `prd.md` 存在** → Phase 2 step 2.1。加载 step detail：
+- **Active task status `planning` + 无 `prd.md`** → Phase 1.1。加载 `trellis-brainstorm` skill。
+- **Active task status `planning` + `prd.md` 存在** → 留在 Phase 1。轻量 tasks 可以 PRD-only；复杂 tasks 需要 `design.md` + `implement.md`。在 `task.py start` 前加载相关 Phase 1 step 详情。
+- **Active task status `in_progress`** → Phase 2 step 2.1。加载 step 详情：
   ```bash
   python3 ./.trellis/scripts/get_context.py --mode phase --step 2.1 --platform codex
   ```
-- **Active task + 没有 `prd.md`** → Phase 1.1。加载 `trellis-brainstorm` skill，并创建中文 PRD。
-- **No active task** → 当用户描述多步工作时，加载 `trellis-brainstorm` skill 澄清需求，然后通过 `task.py create` 创建 task，并用中文创建/更新 `prd.md`。对简单一次性问题或琐碎编辑，跳过此流程并直接回答 — 不需要 task。
+- **No active task** → 先分类。简单对话 / 小任务只询问本轮是否要创建 Trellis task。复杂工作则询问是否可以创建 Trellis task 并进入 planning。如果用户说不，本 session 跳过 Trellis。
 
 ---
 

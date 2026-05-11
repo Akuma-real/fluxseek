@@ -17,12 +17,14 @@ Context loading 决定 AI 何时读取 workflow、task、spec、research、works
 | 来源 | 用途 |
 | --- | --- |
 | `.trellis/workflow.md` | Workflow 和 next-action hints。 |
-| `.trellis/tasks/<task>/prd.md` | 当前 task requirements。 |
-| `.trellis/tasks/<task>/implement.jsonl` | implementation 前要读取的 spec/research。 |
-| `.trellis/tasks/<task>/check.jsonl` | checking 期间要读取的 spec/research。 |
-| `.trellis/spec/` | Project specs。 |
-| `.trellis/workspace/` | Session records。 |
-| git status | 当前 working tree changes。 |
+| `.trellis/tasks/<task>/prd.md` | Current task requirements. |
+| `.trellis/tasks/<task>/design.md` | Complex task technical design. |
+| `.trellis/tasks/<task>/implement.md` | Complex task execution plan. |
+| `.trellis/tasks/<task>/implement.jsonl` | Spec/research to read before implementation. |
+| `.trellis/tasks/<task>/check.jsonl` | Spec/research to read during checking. |
+| `.trellis/spec/` | Project specs. |
+| `.trellis/workspace/` | Session records. |
+| git status | Current working tree changes. |
 
 ## 常见需求与编辑点
 
@@ -64,10 +66,11 @@ Context 不能无限增长。优先注入 indexes 和 paths，让 AI 可按需�
 两种模式下，都确保 agent 最终读取：
 
 1. active task
-2. `prd.md`
-3. `info.md` if present
-4. the corresponding JSONL
-5. JSONL 引用的 spec/research
+2. the corresponding JSONL
+3. spec/research referenced by the JSONL
+4. `prd.md`
+5. `design.md` if present
+6. `implement.md` if present
 
 ## 故障排查顺序
 

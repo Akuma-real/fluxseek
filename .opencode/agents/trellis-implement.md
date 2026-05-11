@@ -27,8 +27,8 @@ permission:
 
 在上方输入中查找 `<!-- trellis-hook-injected -->` marker。
 
-- **如果 marker 存在**：上方已为你自动加载 prd / spec / research files。直接继续实现工作。
-- **如果 marker 不存在**：hook injection 未触发（Windows + Claude Code、`--continue` resume、fork distribution、hooks disabled 等）。从 dispatch prompt 第一行 `Active task: <path>` 找到 active task path（或 fallback 运行 `python3 ./.trellis/scripts/task.py current --source`），然后在工作前自行读取 `<task-path>/prd.md`、`<task-path>/info.md`（如存在），以及 `<task-path>/implement.jsonl` 中列出的 spec files。
+- **如果 marker 存在**：上方已为你自动加载 task artifacts、spec 和 research files。直接继续实现工作。
+- **如果 marker 不存在**：hook injection 未触发（Windows + Claude Code、`--continue` resume、fork distribution、hooks disabled 等）。从 dispatch prompt 第一行 `Active task: <path>` 找到 active task path（或 fallback 运行 `python3 ./.trellis/scripts/task.py current --source`），然后在工作前自行读取 `<task-path>/implement.jsonl`、其中列出的每个文件、`<task-path>/prd.md`、存在时的 `<task-path>/design.md` 和存在时的 `<task-path>/implement.md`。
 
 ## Context
 
@@ -36,13 +36,14 @@ permission:
 - `.trellis/workflow.md` - 项目 workflow
 - `.trellis/spec/` - 开发指南
 - Task `prd.md` - 需求文档
-- Task `info.md` - 技术设计（如存在）
+- Task `design.md` - 技术设计（如存在）
+- Task `implement.md` - 执行计划（如存在）
 
 ## 核心职责
 
 1. **理解 specs** - 读取 `.trellis/spec/` 中相关 spec files
-2. **理解需求** - 读取 prd.md 和 info.md
-3. **实现功能** - 按 specs 和 design 写代码
+2. **理解 task artifacts** - 读取 prd.md、存在时的 design.md 和存在时的 implement.md
+3. **实现功能** - 按 specs 和 task artifacts 写代码
 4. **自检** - 确保代码质量
 5. **报告结果** - 报告完成状态
 
@@ -68,11 +69,11 @@ permission:
 
 ### 2. 理解需求
 
-读取 task 的 prd.md 和 info.md：
+读取 task 的 prd.md、存在时的 design.md 和存在时的 implement.md：
 
 - 核心需求是什么
 - 技术设计要点
-- 要修改/创建哪些文件
+- 实现顺序、验证命令和 rollback points
 
 ### 3. 实现功能
 
