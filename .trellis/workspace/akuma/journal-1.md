@@ -539,3 +539,37 @@ Updated Trellis runtime files from trellis update, then re-localized current Tre
 ### Next Steps
 
 - None - task complete
+
+
+## Session 17: Organize commit history
+
+**Date**: 2026-05-11
+**Task**: Organize commit history
+**Branch**: `main`
+
+### Summary
+
+Planned and executed aggressive full-history rewrite with Chinese commit titles, deleting beta tags and replacing noisy Trellis history with semantic commits.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `06a618e` | (see git log) |
+| `5cdb4d3` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
