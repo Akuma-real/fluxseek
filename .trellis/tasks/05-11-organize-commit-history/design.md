@@ -4,6 +4,8 @@
 
 用户选择：全历史重写，不保留任何 tag，并删除远端已有 beta tags。
 
+Commit message 策略：保留 `feat:` / `fix:` / `chore:` / `docs:` 等 Conventional Commit 前缀，标题主体使用中文。
+
 ## 风险
 
 * 所有 commit hash 会变化。
@@ -25,18 +27,18 @@
 
 将现有 83 个 commit 压缩为少量语义提交，推荐结构：
 
-1. `chore: bootstrap Flutter workspace`
-2. `build: configure platform builds and release workflow`
-3. `feat: import bundled packages and app assets`
-4. `feat: add localization resources`
-5. `feat: implement NodeSeek domain and network stack`
-6. `feat: implement app state and UI`
-7. `test: add parser, network, update, and UI regressions`
-8. `perf: optimize Android release builds`
-9. `chore: upgrade dependencies and tooling`
-10. `docs: localize Trellis and AI guidance to Chinese`
-11. `fix: stabilize NodeSeek parsing, csrf, and topic flows`
-12. `chore: bump version to 0.1.0-beta.16`
+1. `chore: 初始化 Flutter 工作区`
+2. `build: 配置平台构建与发布流程`
+3. `feat: 引入本地 packages 与应用资源`
+4. `feat: 添加本地化资源与生成流程`
+5. `feat: 实现 NodeSeek 领域模型与网络栈`
+6. `feat: 实现应用状态与界面`
+7. `test: 添加解析、网络、更新与界面回归测试`
+8. `perf: 优化 Android 发布构建`
+9. `chore: 升级依赖与工具链`
+10. `docs: 中文化 Trellis 与 AI 指导`
+11. `fix: 稳定 NodeSeek 解析、CSRF 与主题流程`
+12. `chore: 将版本提升到 0.1.0-beta.16`
 
 ## 实现策略
 
