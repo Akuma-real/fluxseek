@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 12
-- **Last Active**: 2026-05-10
+- **Total Sessions**: 13
+- **Last Active**: 2026-05-11
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~408 | Active |
+| `journal-1.md` | ~441 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 13 | 2026-05-11 | Add Chinese communication instruction | `2265b4b` | `main` |
 | 12 | 2026-05-10 | 发布 beta 版本 0.1.0-beta.15 | `d77a60e` | `main` |
 | 11 | 2026-05-10 | 添加中文对话规范到 spec | `496c687` | `main` |
 | 10 | 2026-05-10 | Fix createReply CSRF error handling | `90a1bc9` | `main` |

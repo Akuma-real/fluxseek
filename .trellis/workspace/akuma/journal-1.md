@@ -406,3 +406,36 @@ Wrapped _dio.post('/posts.json') with try/catch _throwApiError to match existing
 ### Next Steps
 
 - None - task complete
+
+
+## Session 13: Add Chinese communication instruction
+
+**Date**: 2026-05-11
+**Task**: Add Chinese communication instruction
+**Branch**: `main`
+
+### Summary
+
+Added a persistent AGENTS.md instruction requiring assistants to communicate with users in Chinese.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2265b4b` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
