@@ -1,4 +1,0 @@
-{"file": ".trellis/spec/tooling/index.md", "reason": "检查发布任务是否遵守 just/tooling 命令规则。"}
-{"file": ".trellis/spec/tooling/release.md", "reason": "检查 beta 发布、版本 bump、tag 与发布前检查是否符合规范。"}
-{"file": ".trellis/spec/android/index.md", "reason": "检查 Android 发布上下文是否被考虑。"}
-{"file": ".trellis/spec/android/build-and-release.md", "reason": "检查 release build、签名 secret 与构建产物处理是否符合规范。"}
