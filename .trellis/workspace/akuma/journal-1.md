@@ -439,3 +439,36 @@ Added a persistent AGENTS.md instruction requiring assistants to communicate wit
 ### Next Steps
 
 - None - task complete
+
+
+## Session 14: Localize Trellis guidance to Chinese
+
+**Date**: 2026-05-11
+**Task**: Localize Trellis guidance to Chinese
+**Branch**: `main`
+
+### Summary
+
+Localized Trellis workflow, specs, local skills, and OpenCode Trellis guidance to Chinese while preserving commands and machine-readable formats.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a831d7c` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
