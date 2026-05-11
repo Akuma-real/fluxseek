@@ -472,3 +472,36 @@ Localized Trellis workflow, specs, local skills, and OpenCode Trellis guidance t
 ### Next Steps
 
 - None - task complete
+
+
+## Session 15: Release beta 0.1.0-beta.16
+
+**Date**: 2026-05-11
+**Task**: Release beta 0.1.0-beta.16
+**Branch**: `main`
+
+### Summary
+
+Released beta 0.1.0-beta.16 via just prerelease next --yes; pushed main and tag v0.1.0-beta.16, triggering GitHub Actions run 25649542711.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f71c726` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
